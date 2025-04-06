@@ -1,0 +1,31 @@
+on:
+  push:
+    - workflows: build-package-workflow
+      filter:
+        branches: ["main"]
+  pull_request:
+    - workflows: build-package-workflow
+      filter:
+        source_branches: ["**", "!test**"]
+        target_branches: "main"
+
+workflows:
+  build-package-workflow:
+    tasks:
+      - build-package-task
+
+tasks:
+  - name: build-package-task
+    cubes:
+      - name: setup-jdk
+        script:
+          - sudo apt install openjdk-17-jdk -y
+      - name: test
+        script:
+          - ./gradlew check
+      - name: package
+        script:
+          - ./gradlew build
+        artifacts:
+          paths:
+            - build/libs/memes-tv-0.0.1-SNAPSHOT.jar
