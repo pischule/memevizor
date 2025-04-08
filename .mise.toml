@@ -4,3 +4,7 @@ java = "temurin-17"
 [tasks.release]
 description = 'Build and push docker image'
 run = './gradlew build && ./gradlew jib --image=cr.yandex/crph26nr2d2ds65t2m7b/memes-tv:0.0.1-SNAPSHOT'
+
+[tasks.fmt]
+description = 'Fourmat source code'
+run = './gradlew :spotlessApply'
