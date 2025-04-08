@@ -20,7 +20,7 @@ tasks:
         script:
           #- yc config set token $YC_TOKEN
           - curl -sSL https://storage.yandexcloud.net/yandexcloud-yc/install.sh | bash
-          - source "/root/.bashrc"
+          - exec -l $SHELL
           - yc config set cloud-id $YC_CLOUD_ID
           - yc config set folder-id $YC_FOLDER_ID
           - yc container registry configure-docker
