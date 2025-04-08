@@ -1,25 +1,27 @@
 on:
   push:
-    - workflows: [build-package-workflow, docker-workflow]
+    - workflows: [build-package-workflow]
       filter:
         branches: ["main"]
-  pull_request:
-    - workflows: build-package-workflow
-      filter:
-        source_branches: ["**", "!test**"]
-        target_branches: "main"
 
 workflows:
   build-package-workflow:
     tasks:
       - build-package-task
-  docker-workflow:
-    tasks:
-      - build-push-image-task
 
 tasks:
   - name: build-package-task
     cubes:
+      - name: yc-login
+        env:
+          #YC_TOKEN: ${{ secrets.YC_TOKEN }}
+          YC_CLOUD_ID: b1g57p6cf47buiqb13l9
+          YC_FOLDER_ID: b1g69j298i7l91gblj93
+        script:
+          #- yc config set token $YC_TOKEN
+          - yc config set cloud-id $YC_CLOUD_ID
+          - yc config set folder-id $YC_FOLDER_ID
+          - yc container registry configure-docker
       - name: setup-jdk
         script:
           - sudo apt install openjdk-17-jdk -y
@@ -28,23 +30,10 @@ tasks:
           - ./gradlew check
       - name: package
         script:
-          - ./gradlew build
+          - ./gradlew assemble
         artifacts:
           paths:
             - build/libs/memes-tv-0.0.1-SNAPSHOT.jar
-  - name: build-push-image-task
-    cubes:
-      - name: setup-jdk
-        script:
-          - sudo apt install openjdk-17-jdk -y
-      - name: build
-        script:
-          - ./gradlew build
-      - name: docker-login
-        env:
-          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-        script:
-          - echo $DOCKER_PASSWORD | docker login --username oauth --password-stdin cr.yandex
       - name: build-image
         script:
           - ./gradlew bootBuildImage
