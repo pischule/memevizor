@@ -12,6 +12,9 @@ workflows:
 tasks:
   - name: build-package-task
     cubes:
+      - name: install-yc
+        script:
+          - curl -sSL https://storage.yandexcloud.net/yandexcloud-yc/install.sh | bash
       - name: yc-login
         env:
           #YC_TOKEN: ${{ secrets.YC_TOKEN }}
@@ -19,8 +22,6 @@ tasks:
           YC_FOLDER_ID: b1g69j298i7l91gblj93
         script:
           #- yc config set token $YC_TOKEN
-          - curl -sSL https://storage.yandexcloud.net/yandexcloud-yc/install.sh | bash
-          - exec -l $SHELL
           - yc config set cloud-id $YC_CLOUD_ID
           - yc config set folder-id $YC_FOLDER_ID
           - yc container registry configure-docker
