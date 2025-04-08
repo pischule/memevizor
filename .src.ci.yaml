@@ -1,6 +1,6 @@
 on:
   push:
-    - workflows: build-package-workflow
+    - workflows: [build-package-workflow, docker-workflow]
       filter:
         branches: ["main"]
   pull_request:
@@ -13,6 +13,9 @@ workflows:
   build-package-workflow:
     tasks:
       - build-package-task
+  docker-workflow:
+    tasks:
+      - build-push-image-task
 
 tasks:
   - name: build-package-task
@@ -29,3 +32,22 @@ tasks:
         artifacts:
           paths:
             - build/libs/memes-tv-0.0.1-SNAPSHOT.jar
+  - name: build-push-image-task
+    cubes:
+      - name: setup-jdk
+        script:
+          - sudo apt install openjdk-17-jdk -y
+      - name: build
+        script:
+          - ./gradlew build
+      - name: docker-login
+        env:
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+        script:
+          - echo $DOCKER_PASSWORD | docker login --username oauth --password-stdin cr.yandex
+      - name: build-image
+        script:
+          - ./gradlew bootBuildImage
+          - docker tag docker.io/library/memes-tv:0.0.1-SNAPSHOT cr.yandex/crph26nr2d2ds65t2m7b/memes-tv:0.0.1-SNAPSHOT
+      - name: push-image
+          - docker push cr.yandex/crph26nr2d2ds65t2m7b/memes-tv:0.0.1-SNAPSHOT
