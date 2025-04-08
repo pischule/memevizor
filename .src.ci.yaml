@@ -50,4 +50,5 @@ tasks:
           - ./gradlew bootBuildImage
           - docker tag docker.io/library/memes-tv:0.0.1-SNAPSHOT cr.yandex/crph26nr2d2ds65t2m7b/memes-tv:0.0.1-SNAPSHOT
       - name: push-image
+        script:
           - docker push cr.yandex/crph26nr2d2ds65t2m7b/memes-tv:0.0.1-SNAPSHOT
