@@ -1,4 +1,4 @@
-package com.pischule.memestv
+package com.pischule.memestv.bot
 
 import org.springframework.boot.context.properties.ConfigurationProperties
 

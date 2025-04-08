@@ -1,4 +1,4 @@
-package com.pischule.memestv
+package com.pischule.memestv.s3
 
 import aws.sdk.kotlin.runtime.auth.credentials.StaticCredentialsProvider
 import aws.sdk.kotlin.services.s3.S3Client

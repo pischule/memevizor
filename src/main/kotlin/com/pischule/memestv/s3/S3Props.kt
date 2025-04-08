@@ -1,4 +1,4 @@
-package com.pischule.memestv
+package com.pischule.memestv.s3
 
 import org.springframework.boot.context.properties.ConfigurationProperties
 
