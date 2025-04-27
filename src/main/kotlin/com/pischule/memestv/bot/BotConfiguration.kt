@@ -8,6 +8,7 @@ import com.github.kotlintelegrambot.dispatcher.photos
 import com.pischule.memestv.bot.handler.PhotoHandlerService
 import com.pischule.memestv.bot.handler.ThisCommandHandlerService
 import io.github.oshai.kotlinlogging.KotlinLogging
+import io.github.oshai.kotlinlogging.withLoggingContext
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -28,17 +29,27 @@ class BotConfiguration(
             token = botProps.token
             dispatch {
                 message {
-                    try {
-                        thisCommandHandlerService.create().invoke(this)
-                    } catch (e: Error) {
-                        log.error(e) { "Error while handling message" }
+                    withLoggingContext(
+                        "messageId" to this.message.messageId.toString(),
+                        "chatId" to this.message.chat.id.toString(),
+                    ) {
+                        try {
+                            thisCommandHandlerService.create().invoke(this)
+                        } catch (e: Error) {
+                            log.error(e) { "Error while handling message" }
+                        }
                     }
                 }
                 photos {
-                    try {
-                        photoHandlerService.create().invoke(this)
-                    } catch (e: Error) {
-                        log.error(e) { "Error while handling photo" }
+                    withLoggingContext(
+                        "messageId" to this.message.messageId.toString(),
+                        "chatId" to this.message.chat.id.toString(),
+                    ) {
+                        try {
+                            photoHandlerService.create().invoke(this)
+                        } catch (e: Error) {
+                            log.error(e) { "Error while handling photo" }
+                        }
                     }
                 }
             }

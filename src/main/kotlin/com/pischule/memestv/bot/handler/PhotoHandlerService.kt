@@ -15,22 +15,23 @@ private val log = KotlinLogging.logger {}
 class PhotoHandlerService(private val botProps: BotProps) {
 
     fun create(): HandlePhotos = {
-        if (shouldForwardMessage()) {
-            forwardPhotoMessage()
+        if (shouldForwardMessage(this)) {
+            forwardPhotoMessage(this)
         }
 
-        reactToMessage("👀")
+        reactToMessage(this, "👀")
     }
 
-    private fun MediaHandlerEnvironment<List<PhotoSize>>.shouldForwardMessage(): Boolean {
-        return message.chat.id != botProps.destinationChatId
+    private fun shouldForwardMessage(env: MediaHandlerEnvironment<List<PhotoSize>>): Boolean {
+        return env.message.chat.id != botProps.destinationChatId
     }
 
-    private suspend fun MediaHandlerEnvironment<List<PhotoSize>>.forwardPhotoMessage() {
-        bot.forwardMessage(
+    private suspend fun forwardPhotoMessage(env: MediaHandlerEnvironment<List<PhotoSize>>) {
+        env.bot
+            .forwardMessage(
                 chatId = ChatId.fromId(botProps.destinationChatId),
-                fromChatId = ChatId.fromId(message.chat.id),
-                messageId = message.messageId,
+                fromChatId = ChatId.fromId(env.message.chat.id),
+                messageId = env.message.messageId,
             )
             .fold(
                 { log.info { "Forwarded picture message: $it" } },
@@ -38,12 +39,16 @@ class PhotoHandlerService(private val botProps: BotProps) {
             )
     }
 
-    private suspend fun MediaHandlerEnvironment<List<PhotoSize>>.reactToMessage(emoji: String) {
-        bot.setMessageReaction(
-                chatId = ChatId.fromId(message.chat.id),
-                messageId = message.messageId,
+    private suspend fun reactToMessage(
+        env: MediaHandlerEnvironment<List<PhotoSize>>,
+        emoji: String,
+    ) {
+        env.bot
+            .setMessageReaction(
+                chatId = ChatId.fromId(env.message.chat.id),
+                messageId = env.message.messageId,
                 reaction = listOf(ReactionType.Emoji(emoji)),
             )
-            .onError { error -> log.warn { "Failed to react to message: $error" } }
+            .onError { error -> log.atWarn { "Failed to react to message: $error" } }
     }
 }

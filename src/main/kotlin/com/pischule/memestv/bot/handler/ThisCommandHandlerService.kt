@@ -17,7 +17,7 @@ class ThisCommandHandlerService(
     private val fileUploaderService: FileUploaderService,
 ) {
     fun create(): HandleMessage = HandleMessage@{
-        if (!shouldHandleMessage()) return@HandleMessage
+        if (!shouldHandleMessage(this)) return@HandleMessage
 
         val maxResPhotoId = message.replyToMessage!!.photo!!.last().fileId
         val fileBytes = bot.downloadFileBytes(maxResPhotoId) ?: return@HandleMessage
@@ -27,20 +27,21 @@ class ThisCommandHandlerService(
         fileUploaderService.uploadFile(fileBytes)
         log.info { "Uploaded a file $maxResPhotoId to S3" }
 
-        reactToMessage("👍")
+        reactToMessage(this, "👍")
     }
 
-    private fun MessageHandlerEnvironment.shouldHandleMessage(): Boolean {
-        val isFromTargetChat = message.chat.id == botProps.destinationChatId
-        val isThisCommand = message.text?.lowercase() == "this"
-        val hasPhotoReply = message.replyToMessage?.photo?.isNotEmpty() == true
+    private fun shouldHandleMessage(env: MessageHandlerEnvironment): Boolean {
+        val isFromTargetChat = env.message.chat.id == botProps.destinationChatId
+        val isThisCommand = env.message.text?.lowercase() == "this"
+        val hasPhotoReply = env.message.replyToMessage?.photo?.isNotEmpty() == true
         return isFromTargetChat && isThisCommand && hasPhotoReply
     }
 
-    private suspend fun MessageHandlerEnvironment.reactToMessage(emoji: String) {
-        bot.setMessageReaction(
-                chatId = ChatId.fromId(message.chat.id),
-                messageId = message.messageId,
+    private suspend fun reactToMessage(env: MessageHandlerEnvironment, emoji: String) {
+        env.bot
+            .setMessageReaction(
+                chatId = ChatId.fromId(env.message.chat.id),
+                messageId = env.message.messageId,
                 reaction = listOf(ReactionType.Emoji(emoji)),
             )
             .onError { error -> log.warn { "Failed to react to message: $error" } }
