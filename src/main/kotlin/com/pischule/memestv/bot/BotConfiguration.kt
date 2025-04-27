@@ -5,15 +5,17 @@ import com.github.kotlintelegrambot.bot
 import com.github.kotlintelegrambot.dispatch
 import com.github.kotlintelegrambot.dispatcher.message
 import com.github.kotlintelegrambot.dispatcher.photos
+import com.github.kotlintelegrambot.entities.Message
 import com.pischule.memestv.bot.handler.PhotoHandlerService
 import com.pischule.memestv.bot.handler.ThisCommandHandlerService
+import com.pischule.memestv.util.getMaxResPhotoId
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.github.oshai.kotlinlogging.withLoggingContext
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
-private val log = KotlinLogging.logger {}
+private val logger = KotlinLogging.logger {}
 
 @EnableConfigurationProperties(BotProps::class)
 @Configuration
@@ -29,30 +31,33 @@ class BotConfiguration(
             token = botProps.token
             dispatch {
                 message {
-                    withLoggingContext(
-                        "messageId" to this.message.messageId.toString(),
-                        "chatId" to this.message.chat.id.toString(),
-                    ) {
+                    withLoggingContext(messageContext(message)) {
                         try {
-                            thisCommandHandlerService.create().invoke(this)
+                            thisCommandHandlerService.create(this)
                         } catch (e: Error) {
-                            log.error(e) { "Error while handling message" }
+                            logger.error(e) { "Error while handling message" }
                         }
                     }
                 }
                 photos {
-                    withLoggingContext(
-                        "messageId" to this.message.messageId.toString(),
-                        "chatId" to this.message.chat.id.toString(),
-                    ) {
+                    withLoggingContext(messageContext(message)) {
                         try {
-                            photoHandlerService.create().invoke(this)
+                            photoHandlerService.create(this)
                         } catch (e: Error) {
-                            log.error(e) { "Error while handling photo" }
+                            logger.error(e) { "Error while handling photo" }
                         }
                     }
                 }
             }
         }
     }
+
+    private fun messageContext(message: Message): Map<String, String?> =
+        mapOf(
+            "message_id" to message.messageId.toString(),
+            "chat_id" to message.chat.id.toString(),
+            "from_user_id" to message.from?.id.toString(),
+            "from_user_username" to message.from?.username.toString(),
+            "file_id" to message.getMaxResPhotoId(),
+        )
 }

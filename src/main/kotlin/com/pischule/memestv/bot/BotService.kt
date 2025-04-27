@@ -6,7 +6,7 @@ import jakarta.annotation.PostConstruct
 import jakarta.annotation.PreDestroy
 import org.springframework.stereotype.Service
 
-private val log = KotlinLogging.logger {}
+private val logger = KotlinLogging.logger {}
 
 @Service
 class BotService(private val bot: Bot) {
@@ -14,12 +14,12 @@ class BotService(private val bot: Bot) {
     @PostConstruct
     fun start() {
         Thread { bot.startPolling() }.start()
-        log.info { "Initialized bot" }
+        logger.info { "Initialized bot" }
     }
 
     @PreDestroy
     fun stop() {
         bot.stopPolling()
-        log.info { "Stopped bot" }
+        logger.info { "Stopped bot" }
     }
 }
