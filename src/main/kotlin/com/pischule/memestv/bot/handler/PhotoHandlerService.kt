@@ -33,7 +33,7 @@ class PhotoHandlerService(private val botProps: BotProps) {
                 messageId = env.message.messageId,
             )
             .fold(
-                { logger.atInfo { "Forwarded picture message: $it" } },
+                { logger.info { "Forwarded picture message" } },
                 { logger.error { "Failed to forward message: $it" } },
             )
     }
