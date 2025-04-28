@@ -55,3 +55,10 @@ spotless {
     ktfmt("0.54").kotlinlangStyle()
   }
 }
+
+jib {
+    container {
+        // disable spring devtools
+        jvmFlags = listOf("-Dspring.devtools.restart.enabled=false")
+    }
+}
