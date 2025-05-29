@@ -17,6 +17,8 @@ class ThisCommandHandlerService(
     private val botProps: BotProps,
     private val fileUploaderService: FileUploaderService,
 ) {
+    private val confirmCommands = listOf("this", "soxok!")
+
     suspend fun create(env: MessageHandlerEnvironment) {
         if (!shouldHandleMessage(env)) return
 
@@ -35,9 +37,10 @@ class ThisCommandHandlerService(
 
     private fun shouldHandleMessage(env: MessageHandlerEnvironment): Boolean {
         val isFromTargetChat = env.message.chat.id == botProps.destinationChatId
-        val isThisCommand = env.message.text?.lowercase() == "this"
+        val command = env.message.text?.lowercase()
+        val isConfirmCommand = command in confirmCommands
         val hasPhotoReply = env.message.replyToMessage?.photo?.isNotEmpty() == true
-        return isFromTargetChat && isThisCommand && hasPhotoReply
+        return isFromTargetChat && isConfirmCommand && hasPhotoReply
     }
 
     private suspend fun reactToMessage(env: MessageHandlerEnvironment, emoji: String) {
