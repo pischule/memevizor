@@ -29,24 +29,26 @@ class BotConfiguration(
     fun telegramBot(): Bot {
         return bot {
             token = botProps.token
-            dispatch {
-                message {
-                    withLoggingContext(messageContext(message)) {
-                        try {
-                            thisCommandHandlerService.create(this)
-                        } catch (e: Error) {
-                            logger.error(e) { "Error while handling message" }
-                        }
-                    }
+            setupDispatchers()
+        }
+    }
+
+    private fun Bot.Builder.setupDispatchers() = dispatch {
+        message {
+            withLoggingContext(messageContext(message)) {
+                try {
+                    thisCommandHandlerService.create(this)
+                } catch (e: Error) {
+                    logger.error(e) { "Error while handling message" }
                 }
-                photos {
-                    withLoggingContext(messageContext(message)) {
-                        try {
-                            photoHandlerService.create(this)
-                        } catch (e: Error) {
-                            logger.error(e) { "Error while handling photo" }
-                        }
-                    }
+            }
+        }
+        photos {
+            withLoggingContext(messageContext(message)) {
+                try {
+                    photoHandlerService.create(this)
+                } catch (e: Error) {
+                    logger.error(e) { "Error while handling photo" }
                 }
             }
         }

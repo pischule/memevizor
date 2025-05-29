@@ -10,16 +10,23 @@ private val logger = KotlinLogging.logger {}
 
 @Service
 class BotService(private val bot: Bot) {
+    private var pollingThread: Thread? = null
 
     @PostConstruct
     fun start() {
-        Thread { bot.startPolling() }.start()
-        logger.info { "Initialized bot" }
+        pollingThread =
+            Thread { bot.startPolling() }
+                .apply {
+                    name = "telegram-bot-polling"
+                    start()
+                }
+        logger.info { "Bot service started" }
     }
 
     @PreDestroy
     fun stop() {
         bot.stopPolling()
-        logger.info { "Stopped bot" }
+        pollingThread?.join(1000)
+        logger.info { "Bot service stopped" }
     }
 }
