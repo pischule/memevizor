@@ -17,7 +17,7 @@ class ThisCommandHandlerService(
     private val botProps: BotProps,
     private val fileUploaderService: FileUploaderService,
 ) {
-    private val confirmCommands = listOf("this", "soxok!")
+    private val confirmCommands = listOf("this", "!soxok")
 
     suspend fun create(env: MessageHandlerEnvironment) {
         if (!shouldHandleMessage(env)) return
