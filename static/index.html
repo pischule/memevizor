@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📺</text></svg>">
+    <title>memes-tv</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background-color: black;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+        img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+    </style>
+</head>
+<body>
+    <img id="image" src="_.jpeg" alt="Fullscreen Image">
+</body>
+<script>
+    const img = document.getElementById('image');
+
+    function refreshImage() {
+      // Add timestamp to URL to bypass cache
+      img.src = img.src.split('?')[0] + '?t=' + new Date().getTime();
+    }
+
+    // Refresh every 5 minutes
+    setInterval(refreshImage, 300000);
+
+    // Add click listener to refresh on demand (anywhere on the page)
+    document.addEventListener('click', refreshImage);
+
+    // Add spacebar listener to refresh on demand
+    document.addEventListener('keydown', function(event) {
+      if (event.code === 'Space') {
+        event.preventDefault(); // Prevent page scroll
+        refreshImage()
+      }
+    });
+</script>
+</html>
