@@ -1,11 +1,11 @@
-package com.pischule.memestv.bot.handler
+package com.pischule.memevizor.bot.handler
 
 import com.github.kotlintelegrambot.dispatcher.handlers.MessageHandlerEnvironment
 import com.github.kotlintelegrambot.entities.ChatId
 import com.github.kotlintelegrambot.entities.reaction.ReactionType
-import com.pischule.memestv.bot.BotProps
-import com.pischule.memestv.upload.FileUploaderService
-import com.pischule.memestv.util.getMaxResPhotoId
+import com.pischule.memevizor.bot.BotProps
+import com.pischule.memevizor.upload.FileUploaderService
+import com.pischule.memevizor.util.getMaxResPhotoId
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.github.oshai.kotlinlogging.withLoggingContext
 import org.springframework.stereotype.Component

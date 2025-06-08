@@ -1,4 +1,4 @@
-package com.pischule.memestv.bot
+package com.pischule.memevizor.bot
 
 import com.github.kotlintelegrambot.Bot
 import io.github.oshai.kotlinlogging.KotlinLogging

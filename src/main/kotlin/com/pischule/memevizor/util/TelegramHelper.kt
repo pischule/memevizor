@@ -1,4 +1,4 @@
-package com.pischule.memestv.util
+package com.pischule.memevizor.util
 
 import com.github.kotlintelegrambot.entities.Message
 

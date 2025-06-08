@@ -1,4 +1,4 @@
-rootProject.name = "memes-tv"
+rootProject.name = "memevizor"
 
 dependencyResolutionManagement {
     repositories {

@@ -1,4 +1,4 @@
-package com.pischule.memestv.bot
+package com.pischule.memevizor.bot
 
 import com.github.kotlintelegrambot.Bot
 import com.github.kotlintelegrambot.bot
@@ -6,9 +6,9 @@ import com.github.kotlintelegrambot.dispatch
 import com.github.kotlintelegrambot.dispatcher.message
 import com.github.kotlintelegrambot.dispatcher.photos
 import com.github.kotlintelegrambot.entities.Message
-import com.pischule.memestv.bot.handler.PhotoHandlerService
-import com.pischule.memestv.bot.handler.ThisCommandHandlerService
-import com.pischule.memestv.util.getMaxResPhotoId
+import com.pischule.memevizor.bot.handler.PhotoHandlerService
+import com.pischule.memevizor.bot.handler.ThisCommandHandlerService
+import com.pischule.memevizor.util.getMaxResPhotoId
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.github.oshai.kotlinlogging.withLoggingContext
 import org.springframework.boot.context.properties.EnableConfigurationProperties

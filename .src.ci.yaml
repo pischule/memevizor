@@ -28,4 +28,4 @@ tasks:
           - ./gradlew assemble
         artifacts:
           paths:
-            - build/libs/memes-tv-0.0.1-SNAPSHOT.jar
+            - build/libs/memevizor-0.0.1-SNAPSHOT.jar

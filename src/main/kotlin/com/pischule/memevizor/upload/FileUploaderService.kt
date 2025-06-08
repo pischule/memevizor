@@ -1,4 +1,4 @@
-package com.pischule.memestv.upload
+package com.pischule.memevizor.upload
 
 import org.springframework.stereotype.Service
 

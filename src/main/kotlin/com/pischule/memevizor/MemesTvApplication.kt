@@ -1,4 +1,4 @@
-package com.pischule.memestv
+package com.pischule.memevizor
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication

@@ -1,4 +1,4 @@
-package com.pischule.memestv.upload
+package com.pischule.memevizor.upload
 
 import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.runBlocking

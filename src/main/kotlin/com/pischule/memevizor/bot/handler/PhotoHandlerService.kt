@@ -1,10 +1,10 @@
-package com.pischule.memestv.bot.handler
+package com.pischule.memevizor.bot.handler
 
 import com.github.kotlintelegrambot.dispatcher.handlers.media.MediaHandlerEnvironment
 import com.github.kotlintelegrambot.entities.ChatId
 import com.github.kotlintelegrambot.entities.files.PhotoSize
 import com.github.kotlintelegrambot.entities.reaction.ReactionType
-import com.pischule.memestv.bot.BotProps
+import com.pischule.memevizor.bot.BotProps
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.stereotype.Service
 
