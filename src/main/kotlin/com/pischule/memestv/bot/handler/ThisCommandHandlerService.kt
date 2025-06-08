@@ -4,7 +4,7 @@ import com.github.kotlintelegrambot.dispatcher.handlers.MessageHandlerEnvironmen
 import com.github.kotlintelegrambot.entities.ChatId
 import com.github.kotlintelegrambot.entities.reaction.ReactionType
 import com.pischule.memestv.bot.BotProps
-import com.pischule.memestv.s3.FileUploaderService
+import com.pischule.memestv.upload.FileUploaderService
 import com.pischule.memestv.util.getMaxResPhotoId
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.github.oshai.kotlinlogging.withLoggingContext
@@ -28,8 +28,7 @@ class ThisCommandHandlerService(
             val fileBytes = env.bot.downloadFileBytes(maxResPhotoId) ?: return
             logger.info { "Downloaded a file from Telegram" }
 
-            fileUploaderService.uploadFile(fileBytes)
-            logger.info { "Uploaded a file to S3" }
+            fileUploaderService.uploadFile(fileBytes, "_.jpeg")
 
             reactToMessage(env, "👍")
         }
