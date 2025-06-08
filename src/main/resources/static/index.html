@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon"
+          href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📺</text></svg>">
+    <title>memes-tv</title>
+    <style>
+        :root {
+            --bg-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5));
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: black;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: var(--bg-image);
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            filter: blur(20px);
+            transform: scale(1.1);
+            z-index: -1;
+        }
+
+        img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            position: relative;
+            z-index: 1;
+        }
+    </style>
+</head>
+<body>
+<img id="image" alt="Смешная картинка" src="">
+</body>
+<script defer>
+    const imageUrl = '_.jpeg';
+    const refreshIntervalMs = 60_000; // Time in milliseconds (e.g., 10000 = 10 seconds)
+
+    let lastModified = null;
+    const imageElement = document.getElementById('image');
+    let imageBlobUrl = null;
+
+    function updateBackgroundImage(imageUrl) {
+        document.documentElement.style.setProperty(
+            '--bg-image',
+            `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('${imageUrl}')`
+        );
+    }
+
+    async function refreshImage() {
+        try {
+            const headers = new Headers();
+            if (lastModified != null) {
+                headers.append('If-Modified-Since', lastModified);
+            }
+
+            const response = await fetch(imageUrl, {method: 'GET', headers, cache: 'no-store'});
+            const now = new Date().toLocaleTimeString();
+
+            if (response.status === 304) {
+                console.log(`[${now}] Status: 304 Not Modified. Image is up to date.`);
+                return;
+            }
+
+            if (response.status === 200) {
+                const newLastModified = response.headers.get('last-modified');
+                if (newLastModified) {
+                    lastModified = newLastModified;
+                    const imageBlob = await response.blob();
+                    imageBlobUrl = URL.createObjectURL(imageBlob);
+                    imageElement.src = imageBlobUrl;
+                    updateBackgroundImage(imageBlobUrl)
+                } else {
+                    console.warn(`No Last-Modified header found. Cannot perform conditional checks`);
+                }
+                return;
+            }
+
+            console.error(`Unexpected server response: ${response.status} ${response.statusText}`)
+        } catch (error) {
+            console.error('Failed to fetch image:', error);
+        }
+    }
+
+    refreshImage();
+    setInterval(refreshImage, refreshIntervalMs);
+    document.addEventListener('click', refreshImage);
+    document.addEventListener('keydown', function (event) {
+        if (event.code === 'Space') {
+            event.preventDefault();
+            refreshImage();
+        }
+    });
+</script>
+</html>
