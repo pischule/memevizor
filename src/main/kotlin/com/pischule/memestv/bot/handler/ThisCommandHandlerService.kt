@@ -28,7 +28,7 @@ class ThisCommandHandlerService(
             val fileBytes = env.bot.downloadFileBytes(maxResPhotoId) ?: return
             logger.info { "Downloaded a file from Telegram" }
 
-            fileUploaderService.uploadFile(fileBytes, "_.jpeg")
+            fileUploaderService.uploadFile(fileBytes, "_.jpeg", "image/jpeg")
 
             reactToMessage(env, "👍")
         }

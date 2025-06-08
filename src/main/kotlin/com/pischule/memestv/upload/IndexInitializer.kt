@@ -17,7 +17,7 @@ class IndexInitializer(val fileUploaderService: FileUploaderService) {
     fun applicationStartedHandler(event: ApplicationStartedEvent) {
         try {
             val fileBytes = readResourceAsByteArray("static/index.html")
-            runBlocking { fileUploaderService.uploadFile(fileBytes, "index.html") }
+            runBlocking { fileUploaderService.uploadFile(fileBytes, "index.html", "text/html") }
         } catch (e: Error) {
             logger.warn(e) { "Failed to upload " }
         }

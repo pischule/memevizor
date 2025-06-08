@@ -13,12 +13,13 @@ private val logger = KotlinLogging.logger {}
 @Service
 class S3FileUploaderService(private val s3Client: S3Client, private val s3Props: S3Props) :
     FileUploaderService {
-    override suspend fun uploadFile(fileBytes: ByteArray, filename: String) {
+    override suspend fun uploadFile(fileBytes: ByteArray, filename: String, contentType: String) {
         s3Client.putObject(
             PutObjectRequest {
                 body = ByteStream.fromBytes(fileBytes)
                 bucket = s3Props.bucket
                 key = filename
+                this.contentType = contentType
             }
         )
         logger.info { "File $filename has been uploaded to S3" }

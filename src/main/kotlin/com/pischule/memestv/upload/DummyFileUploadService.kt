@@ -10,7 +10,7 @@ private val logger = KotlinLogging.logger {}
 @Service
 class DummyFileUploadService() : FileUploaderService {
 
-    override suspend fun uploadFile(fileBytes: ByteArray, filename: String) {
+    override suspend fun uploadFile(fileBytes: ByteArray, filename: String, contentType: String) {
         logger.info { "File $filename has been successfully uploaded to nowhere" }
     }
 }
