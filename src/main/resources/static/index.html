@@ -50,14 +50,35 @@
             position: relative;
             z-index: 1;
         }
+
+        .qr-code {
+            position: fixed;
+            z-index: 2;
+            bottom: 20px;
+            right: 20px;
+        }
     </style>
 </head>
 <body>
 <img id="image" alt="Смешная картинка" src="">
+<img id="qr-code" class="qr-code" alt="QR Code" src="qr.svg" onerror="this.style.display='none'">
 </body>
 <script defer>
     const imageUrl = '_.jpeg';
     const refreshIntervalMs = 30_000; // Time in milliseconds (e.g., 10000 = 10 seconds)
+
+    function configureQrCode() {
+        // Parse query parameters for QR code size
+        const urlParams = new URLSearchParams(window.location.search);
+        const qrSize = parseInt(urlParams.get('qrSize')) || 100; // Default to 100px if not specified
+
+        const qrCodeElement = document.getElementById('qr-code');
+        qrCodeElement.style.width = `${qrSize}px`;
+        qrCodeElement.style.height = `${qrSize}px`;
+    }
+
+    // Configure QR code on page load
+    configureQrCode();
 
     let lastModified = null;
     const imageElement = document.getElementById('image');
