@@ -71,10 +71,13 @@
         // Parse query parameters for QR code size
         const urlParams = new URLSearchParams(window.location.search);
         const qrSize = parseInt(urlParams.get('qrSize')) || 100; // Default to 100px if not specified
+        const qrOffset = parseInt(urlParams.get('qrOffset')) || 20; // Default to 20px if not specified
 
         const qrCodeElement = document.getElementById('qr-code');
         qrCodeElement.style.width = `${qrSize}px`;
         qrCodeElement.style.height = `${qrSize}px`;
+        qrCodeElement.style.bottom = `${qrOffset}px`;
+        qrCodeElement.style.right = `${qrOffset}px`;
     }
 
     // Configure QR code on page load
