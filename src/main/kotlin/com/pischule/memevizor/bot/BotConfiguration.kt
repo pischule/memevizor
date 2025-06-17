@@ -3,9 +3,12 @@ package com.pischule.memevizor.bot
 import com.github.kotlintelegrambot.Bot
 import com.github.kotlintelegrambot.bot
 import com.github.kotlintelegrambot.dispatch
+import com.github.kotlintelegrambot.dispatcher.command
 import com.github.kotlintelegrambot.dispatcher.message
 import com.github.kotlintelegrambot.dispatcher.photos
+import com.github.kotlintelegrambot.entities.ChatId
 import com.github.kotlintelegrambot.entities.Message
+import com.github.kotlintelegrambot.entities.ParseMode
 import com.pischule.memevizor.bot.handler.PhotoHandlerService
 import com.pischule.memevizor.bot.handler.ThisCommandHandlerService
 import com.pischule.memevizor.util.getMaxResPhotoId
@@ -50,6 +53,16 @@ class BotConfiguration(
                 } catch (e: Error) {
                     logger.error(e) { "Error while handling photo" }
                 }
+            }
+        }
+        command("whoami") {
+            withLoggingContext(messageContext(message)) {
+                bot.sendMessage(
+                        chatId = ChatId.fromId(message.chat.id),
+                        text = "chatId: `${message.chat.id}`\nuserId: `${message.from?.id}`",
+                        parseMode = ParseMode.MARKDOWN_V2,
+                    )
+                    .onError { logger.warn { "Failed to reply to whoami command: $it" } }
             }
         }
     }

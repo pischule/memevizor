@@ -1,2 +1,3 @@
-bot.destination-chat-id=<destination chat id>
+bot.forward-chat-id=<?>
+bot.approver<?>
 bot.token=<bot token>

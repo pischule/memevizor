@@ -22,13 +22,13 @@ class PhotoHandlerService(private val botProps: BotProps) {
     }
 
     private fun shouldForwardMessage(env: MediaHandlerEnvironment<List<PhotoSize>>): Boolean {
-        return env.message.chat.id != botProps.destinationChatId
+        return env.message.chat.id != botProps.forwardChatId
     }
 
     private suspend fun forwardPhotoMessage(env: MediaHandlerEnvironment<List<PhotoSize>>) {
         env.bot
             .forwardMessage(
-                chatId = ChatId.fromId(botProps.destinationChatId),
+                chatId = ChatId.fromId(botProps.forwardChatId),
                 fromChatId = ChatId.fromId(env.message.chat.id),
                 messageId = env.message.messageId,
             )

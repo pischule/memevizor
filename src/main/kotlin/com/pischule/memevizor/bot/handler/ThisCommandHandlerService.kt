@@ -35,11 +35,11 @@ class ThisCommandHandlerService(
     }
 
     private fun shouldHandleMessage(env: MessageHandlerEnvironment): Boolean {
-        val isFromTargetChat = env.message.chat.id == botProps.destinationChatId
+        val isApprover = env.message.from?.id?.let { botProps.approverUserIds.contains(it) } == true
         val command = env.message.text?.lowercase()
         val isConfirmCommand = command in confirmCommands
         val hasPhotoReply = env.message.replyToMessage?.photo?.isNotEmpty() == true
-        return isFromTargetChat && isConfirmCommand && hasPhotoReply
+        return isApprover && isConfirmCommand && hasPhotoReply
     }
 
     private suspend fun reactToMessage(env: MessageHandlerEnvironment, emoji: String) {
