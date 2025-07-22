@@ -1,7 +1,6 @@
 package com.pischule.memevizor.upload
 
 import io.github.oshai.kotlinlogging.KotlinLogging
-import kotlinx.coroutines.runBlocking
 import org.springframework.boot.context.event.ApplicationStartedEvent
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.event.EventListener
@@ -17,7 +16,7 @@ class IndexInitializer(val fileUploaderService: FileUploaderService) {
     fun applicationStartedHandler(event: ApplicationStartedEvent) {
         try {
             val fileBytes = readResourceAsByteArray("static/index.html")
-            runBlocking { fileUploaderService.uploadFile(fileBytes, "index.html", "text/html") }
+            fileUploaderService.uploadFile(fileBytes, "index.html", "text/html")
         } catch (e: Error) {
             logger.warn(e) { "Failed to upload " }
         }

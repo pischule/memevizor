@@ -2,7 +2,6 @@ package com.pischule.memevizor.bot.handler
 
 import com.github.kotlintelegrambot.dispatcher.handlers.media.MediaHandlerEnvironment
 import com.github.kotlintelegrambot.entities.ChatId
-import com.github.kotlintelegrambot.entities.files.PhotoSize
 import com.github.kotlintelegrambot.entities.reaction.ReactionType
 import com.pischule.memevizor.bot.BotProps
 import io.github.oshai.kotlinlogging.KotlinLogging
@@ -11,21 +10,21 @@ import org.springframework.stereotype.Service
 private val logger = KotlinLogging.logger {}
 
 @Service
-class PhotoHandlerService(private val botProps: BotProps) {
+class MediaHandlerService(private val botProps: BotProps) {
 
-    suspend fun create(env: MediaHandlerEnvironment<List<PhotoSize>>) {
+    suspend fun create(env: MediaHandlerEnvironment<*>) {
         if (shouldForwardMessage(env)) {
-            forwardPhotoMessage(env)
+            forwardMessage(env)
         }
 
         reactToMessage(env, "👀")
     }
 
-    private fun shouldForwardMessage(env: MediaHandlerEnvironment<List<PhotoSize>>): Boolean {
+    private fun shouldForwardMessage(env: MediaHandlerEnvironment<*>): Boolean {
         return env.message.chat.id != botProps.forwardChatId
     }
 
-    private suspend fun forwardPhotoMessage(env: MediaHandlerEnvironment<List<PhotoSize>>) {
+    private suspend fun forwardMessage(env: MediaHandlerEnvironment<*>) {
         env.bot
             .forwardMessage(
                 chatId = ChatId.fromId(botProps.forwardChatId),
@@ -38,10 +37,7 @@ class PhotoHandlerService(private val botProps: BotProps) {
             )
     }
 
-    private suspend fun reactToMessage(
-        env: MediaHandlerEnvironment<List<PhotoSize>>,
-        emoji: String,
-    ) {
+    private suspend fun reactToMessage(env: MediaHandlerEnvironment<*>, emoji: String) {
         env.bot
             .setMessageReaction(
                 chatId = ChatId.fromId(env.message.chat.id),

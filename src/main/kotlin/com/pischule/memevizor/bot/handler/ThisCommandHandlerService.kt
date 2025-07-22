@@ -2,10 +2,12 @@ package com.pischule.memevizor.bot.handler
 
 import com.github.kotlintelegrambot.dispatcher.handlers.MessageHandlerEnvironment
 import com.github.kotlintelegrambot.entities.ChatId
+import com.github.kotlintelegrambot.entities.Message
 import com.github.kotlintelegrambot.entities.reaction.ReactionType
 import com.pischule.memevizor.bot.BotProps
 import com.pischule.memevizor.upload.FileUploaderService
 import com.pischule.memevizor.util.getMaxResPhotoId
+import com.pischule.memevizor.util.getVideoFileId
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.github.oshai.kotlinlogging.withLoggingContext
 import org.springframework.stereotype.Component
@@ -22,24 +24,34 @@ class ThisCommandHandlerService(
     suspend fun create(env: MessageHandlerEnvironment) {
         if (!shouldHandleMessage(env)) return
 
-        val maxResPhotoId = env.message.replyToMessage?.getMaxResPhotoId() ?: return
+        val replyToMessage = env.message.replyToMessage ?: return
 
-        withLoggingContext("file_id" to maxResPhotoId) {
-            val fileBytes = env.bot.downloadFileBytes(maxResPhotoId) ?: return
-            logger.info { "Downloaded a file from Telegram" }
+        val (fileId, contentType) = getFileInfo(replyToMessage) ?: return
 
-            fileUploaderService.uploadFile(fileBytes, "_.jpeg", "image/jpeg")
+        withLoggingContext("file_id" to fileId) {
+            val fileBytes = env.bot.downloadFileBytes(fileId) ?: return
+            logger.info { "Downloaded a file from Telegram, size=${fileBytes.size}" }
+
+            fileUploaderService.uploadFile(fileBytes, "_", contentType)
 
             reactToMessage(env, "👍")
         }
+    }
+
+    private fun getFileInfo(message: Message): Pair<String, String>? {
+        return message.getMaxResPhotoId()?.let { it to "image/jpeg" }
+            ?: message.getVideoFileId()?.let { it to "video/mp4" }
     }
 
     private fun shouldHandleMessage(env: MessageHandlerEnvironment): Boolean {
         val isApprover = env.message.from?.id?.let { botProps.approverUserIds.contains(it) } == true
         val command = env.message.text?.lowercase()
         val isConfirmCommand = command in confirmCommands
-        val hasPhotoReply = env.message.replyToMessage?.photo?.isNotEmpty() == true
-        return isApprover && isConfirmCommand && hasPhotoReply
+        val hasMediaReply =
+            env.message.replyToMessage?.let {
+                it.photo?.isNotEmpty() == true || it.video != null
+            } == true
+        return isApprover && isConfirmCommand && hasMediaReply
     }
 
     private suspend fun reactToMessage(env: MessageHandlerEnvironment, emoji: String) {

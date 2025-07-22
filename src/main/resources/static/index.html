@@ -27,22 +27,6 @@
             position: relative;
         }
 
-        body::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: var(--bg-image);
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            filter: blur(20px);
-            transform: scale(1.1);
-            z-index: -1;
-        }
-
         img {
             width: 100%;
             height: 100%;
@@ -51,57 +35,52 @@
             z-index: 1;
         }
 
-        .qr-code {
-            position: fixed;
-            z-index: 2;
-            bottom: 20px;
-            right: 20px;
+        video {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            position: relative;
+            z-index: 1;
         }
     </style>
 </head>
 <body>
 <img id="image" alt="Смешная картинка" src="">
-<img id="qr-code" class="qr-code" alt="QR Code" src="qr.svg" onerror="this.style.display='none'">
 </body>
 <script defer>
-    const imageUrl = '_.jpeg';
+    const fileUrl = '_';
     const refreshIntervalMs = 30_000; // Time in milliseconds (e.g., 10000 = 10 seconds)
-
-    function configureQrCode() {
-        // Parse query parameters for QR code size
-        const urlParams = new URLSearchParams(window.location.search);
-        const qrSize = parseInt(urlParams.get('qrSize')) || 100; // Default to 100px if not specified
-        const qrOffset = parseInt(urlParams.get('qrOffset')) || 20; // Default to 20px if not specified
-
-        const qrCodeElement = document.getElementById('qr-code');
-        qrCodeElement.style.width = `${qrSize}px`;
-        qrCodeElement.style.height = `${qrSize}px`;
-        qrCodeElement.style.bottom = `${qrOffset}px`;
-        qrCodeElement.style.right = `${qrOffset}px`;
-    }
-
-    // Configure QR code on page load
-    configureQrCode();
-
     let lastModified = null;
-    const imageElement = document.getElementById('image');
-    let imageBlobUrl = null;
 
-    function updateBackgroundImage(imageUrl) {
-        document.documentElement.style.setProperty(
-            '--bg-image',
-            `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('${imageUrl}')`
-        );
+    const mediaContainer = document.querySelector("body")
+
+    async function refreshMediaDom(response) {
+        const blob = await response.blob();
+        const blobUrl = URL.createObjectURL(blob);
+        const contentType = response.headers.get("content-type");
+        if (contentType === "video/mp4") {
+            const video = document.createElement("video");
+            video.src = blobUrl;
+            video.controls = true;
+            video.muted = true;
+            video.loop = true;
+            video.autoplay = true;
+            mediaContainer.replaceChildren(video);
+        } else {
+            const img = document.createElement("img");
+            img.src = blobUrl;
+            mediaContainer.replaceChildren(img);
+        }
     }
 
-    async function refreshImage() {
+    async function refreshMedia() {
         try {
             const headers = new Headers();
             if (lastModified != null) {
                 headers.append('If-Modified-Since', lastModified);
             }
 
-            const response = await fetch(imageUrl, {method: 'GET', headers, cache: 'no-store'});
+            const response = await fetch(fileUrl, {method: 'GET', headers, cache: 'no-store'});
             const now = new Date().toLocaleTimeString();
 
             if (response.status === 304) {
@@ -113,10 +92,7 @@
                 const newLastModified = response.headers.get('last-modified');
                 if (newLastModified) {
                     lastModified = newLastModified;
-                    const imageBlob = await response.blob();
-                    imageBlobUrl = URL.createObjectURL(imageBlob);
-                    imageElement.src = imageBlobUrl;
-                    updateBackgroundImage(imageBlobUrl)
+                    await refreshMediaDom(response)
                 } else {
                     console.warn(`No Last-Modified header found. Cannot perform conditional checks`);
                 }
@@ -129,13 +105,13 @@
         }
     }
 
-    refreshImage();
-    setInterval(refreshImage, refreshIntervalMs);
-    document.addEventListener('click', refreshImage);
+    refreshMedia();
+    setInterval(refreshMedia, refreshIntervalMs);
+    document.addEventListener('click', refreshMedia);
     document.addEventListener('keydown', function (event) {
         if (event.code === 'Space') {
             event.preventDefault();
-            refreshImage();
+            refreshMedia();
         }
     });
 </script>
