@@ -58,7 +58,7 @@
         const blob = await response.blob();
         const blobUrl = URL.createObjectURL(blob);
         const contentType = response.headers.get("content-type");
-        if (contentType === "video/mp4") {
+        if (contentType.startsWith("video/")) {
             const video = document.createElement("video");
             video.src = blobUrl;
             video.controls = true;
