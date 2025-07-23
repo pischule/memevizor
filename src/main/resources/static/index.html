@@ -3,116 +3,126 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon"
-          href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📺</text></svg>">
-    <title>memevizor</title>
+    <title>Dynamic Media Refresh</title>
     <style>
-        :root {
-            --bg-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5));
-        }
-
-        * {
+        /* Basic styling to make the media fill the container */
+        html, body {
+            height: 100%;
             margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+            background-color: #111;
         }
-
-        body {
-            background-color: black;
+        #media-container {
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            overflow: hidden;
-            position: relative;
+            height: 100%;
+            width: 100%;
         }
-
-        img {
+        #media-container > img,
+        #media-container > video {
             width: 100%;
             height: 100%;
             object-fit: contain;
-            position: relative;
-            z-index: 1;
-        }
-
-        video {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            position: relative;
-            z-index: 1;
         }
     </style>
 </head>
 <body>
-<img id="image" alt="Смешная картинка" src="">
-</body>
+
+<main id="media-container"></main>
+
 <script defer>
     const fileUrl = '_';
-    const refreshIntervalMs = 30_000; // Time in milliseconds (e.g., 10000 = 10 seconds)
+    const refreshIntervalMs = 15_000; // 15 seconds
+
+    const mediaContainer = document.getElementById("media-container");
     let lastModified = null;
 
-    const mediaContainer = document.querySelector("body")
+    /**
+     * Creates a new media element (<img> or <video>) and replaces the current one.
+     * @param {Response} response The fetch response object.
+     */
+    async function updateMediaElement(response) {
+        // Get the current element to revoke its blob URL later, preventing memory leaks.
+        const currentElement = mediaContainer.firstElementChild;
+        const oldBlobUrl = currentElement?.src;
 
-    async function refreshMediaDom(response) {
         const blob = await response.blob();
-        const blobUrl = URL.createObjectURL(blob);
-        const contentType = response.headers.get("content-type");
+        const newBlobUrl = URL.createObjectURL(blob);
+        const contentType = response.headers.get("content-type") || "";
+
+        let newElement;
         if (contentType.startsWith("video/")) {
-            const video = document.createElement("video");
-            video.src = blobUrl;
-            video.controls = true;
-            video.muted = true;
-            video.loop = true;
-            video.autoplay = true;
-            mediaContainer.replaceChildren(video);
+            newElement = document.createElement("video");
+            newElement.src = newBlobUrl;
+            newElement.controls = true;
+            newElement.muted = true;
+            newElement.loop = true;
+            newElement.autoplay = true;
         } else {
-            const img = document.createElement("img");
-            img.src = blobUrl;
-            mediaContainer.replaceChildren(img);
+            newElement = document.createElement("img");
+            newElement.src = newBlobUrl;
+            newElement.alt = "Dynamically loaded media content";
+        }
+
+        // Replace the entire content of the container with the new element.
+        mediaContainer.replaceChildren(newElement);
+
+        // IMPORTANT: Revoke the old blob URL to free up memory.
+        if (oldBlobUrl && oldBlobUrl.startsWith('blob:')) {
+            URL.revokeObjectURL(oldBlobUrl);
         }
     }
 
+    /**
+     * Fetches the media file and updates it if modified.
+     */
     async function refreshMedia() {
         try {
             const headers = new Headers();
-            if (lastModified != null) {
+            if (lastModified) {
                 headers.append('If-Modified-Since', lastModified);
             }
 
-            const response = await fetch(fileUrl, {method: 'GET', headers, cache: 'no-store'});
+            // 'no-store' ensures we always check with the server.
+            const response = await fetch(fileUrl, { method: 'GET', headers, cache: 'no-store' });
             const now = new Date().toLocaleTimeString();
 
-            if (response.status === 304) {
-                console.log(`[${now}] Status: 304 Not Modified. Image is up to date.`);
+            if (response.status === 304) { // Not Modified
+                console.log(`[${now}] Status: 304 Not Modified. Media is up to date.`);
                 return;
             }
 
-            if (response.status === 200) {
+            if (response.status === 200) { // OK
                 const newLastModified = response.headers.get('last-modified');
                 if (newLastModified) {
                     lastModified = newLastModified;
-                    await refreshMediaDom(response)
+                    await updateMediaElement(response);
+                    console.log(`[${now}] Status: 200 OK. Media updated.`);
                 } else {
-                    console.warn(`No Last-Modified header found. Cannot perform conditional checks`);
+                    console.warn(`[${now}] Warning: No 'Last-Modified' header found. Conditional checks are disabled.`);
                 }
                 return;
             }
 
-            console.error(`Unexpected server response: ${response.status} ${response.statusText}`)
+            console.error(`[${now}] Unexpected server response: ${response.status} ${response.statusText}`);
+
         } catch (error) {
-            console.error('Failed to fetch image:', error);
+            console.error('Failed to fetch media:', error);
         }
     }
 
-    refreshMedia();
-    setInterval(refreshMedia, refreshIntervalMs);
-    document.addEventListener('click', refreshMedia);
-    document.addEventListener('keydown', function (event) {
+    // --- Event Listeners ---
+    document.addEventListener('DOMContentLoaded', refreshMedia); // Initial fetch
+    setInterval(refreshMedia, refreshIntervalMs);               // Periodic refresh
+    document.addEventListener('click', refreshMedia);             // Manual refresh on click
+
+    document.addEventListener('keydown', (event) => {
         if (event.code === 'Space') {
-            event.preventDefault();
+            event.preventDefault(); // Prevent page scroll
             refreshMedia();
         }
     });
 </script>
+
+</body>
 </html>

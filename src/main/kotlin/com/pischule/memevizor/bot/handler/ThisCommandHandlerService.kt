@@ -1,13 +1,14 @@
 package com.pischule.memevizor.bot.handler
 
 import com.github.kotlintelegrambot.dispatcher.handlers.MessageHandlerEnvironment
+import com.github.kotlintelegrambot.entities.ChatAction
 import com.github.kotlintelegrambot.entities.ChatId
-import com.github.kotlintelegrambot.entities.Message
 import com.github.kotlintelegrambot.entities.reaction.ReactionType
 import com.pischule.memevizor.bot.BotProps
 import com.pischule.memevizor.upload.FileUploaderService
 import com.pischule.memevizor.util.getMaxResPhotoId
 import com.pischule.memevizor.util.getVideoFileId
+import com.pischule.memevizor.video.VideoEncoderService
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.github.oshai.kotlinlogging.withLoggingContext
 import org.springframework.stereotype.Component
@@ -18,6 +19,7 @@ private val logger = KotlinLogging.logger {}
 class ThisCommandHandlerService(
     private val botProps: BotProps,
     private val fileUploaderService: FileUploaderService,
+    private val videoEncoderService: VideoEncoderService,
 ) {
     private val confirmCommands = listOf("this", "!soxok")
 
@@ -26,21 +28,33 @@ class ThisCommandHandlerService(
 
         val replyToMessage = env.message.replyToMessage ?: return
 
-        val (fileId, contentType) = getFileInfo(replyToMessage) ?: return
+        val imageFileId = replyToMessage.getMaxResPhotoId()
+        val videoFileId = replyToMessage.getVideoFileId()
+        val fileId = imageFileId ?: videoFileId ?: return
 
+        env.bot.sendChatAction(ChatId.fromId(env.message.chat.id), ChatAction.TYPING)
         withLoggingContext("file_id" to fileId) {
             val fileBytes = env.bot.downloadFileBytes(fileId) ?: return
             logger.info { "Downloaded a file from Telegram, size=${fileBytes.size}" }
 
-            fileUploaderService.uploadFile(fileBytes, "_", contentType)
+            val convertedBytes =
+                if (videoFileId != null) {
+                    videoEncoderService.encodeToWebm(fileBytes)
+                } else {
+                    fileBytes
+                }
+
+            val contentType =
+                if (videoFileId != null) {
+                    "video/webm"
+                } else {
+                    "image/jpeg"
+                }
+
+            fileUploaderService.uploadFile(convertedBytes, "_", contentType)
 
             reactToMessage(env, "👍")
         }
-    }
-
-    private fun getFileInfo(message: Message): Pair<String, String>? {
-        return message.getMaxResPhotoId()?.let { it to "image/jpeg" }
-            ?: message.getVideoFileId()?.let { it to "video/mp4" }
     }
 
     private fun shouldHandleMessage(env: MessageHandlerEnvironment): Boolean {

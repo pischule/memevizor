@@ -2,6 +2,6 @@ package com.pischule.memevizor.util
 
 import com.github.kotlintelegrambot.entities.Message
 
-fun Message.getMaxResPhotoId(): String? = this.photo?.lastOrNull()?.fileId
+fun Message.getMaxResPhotoId(): String? = photo?.lastOrNull()?.fileId
 
-fun Message.getVideoFileId(): String? = this.video?.fileId
+fun Message.getVideoFileId(): String? = video?.fileId ?: videoNote?.fileId
