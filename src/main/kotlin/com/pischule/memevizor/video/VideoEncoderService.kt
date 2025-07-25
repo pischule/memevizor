@@ -33,17 +33,6 @@ class VideoEncoderService {
                 "40",
                 "-b:v",
                 "0k",
-                // audio
-                "-map",
-                "0:a",
-                "-c:a",
-                "libopus",
-                "-b:a",
-                "96k",
-                "-vbr",
-                "on",
-                "-compression_level",
-                "10",
                 // file
                 "-f",
                 "webm",
