@@ -12,7 +12,7 @@ private val logger = KotlinLogging.logger {}
 @Service
 class MediaHandlerService(private val botProps: BotProps) {
 
-    suspend fun create(env: MediaHandlerEnvironment<*>) {
+    fun create(env: MediaHandlerEnvironment<*>) {
         if (shouldForwardMessage(env)) {
             forwardMessage(env)
         }
@@ -24,7 +24,7 @@ class MediaHandlerService(private val botProps: BotProps) {
         return env.message.chat.id != botProps.forwardChatId
     }
 
-    private suspend fun forwardMessage(env: MediaHandlerEnvironment<*>) {
+    private fun forwardMessage(env: MediaHandlerEnvironment<*>) {
         env.bot
             .forwardMessage(
                 chatId = ChatId.fromId(botProps.forwardChatId),
@@ -37,7 +37,7 @@ class MediaHandlerService(private val botProps: BotProps) {
             )
     }
 
-    private suspend fun reactToMessage(env: MediaHandlerEnvironment<*>, emoji: String) {
+    private fun reactToMessage(env: MediaHandlerEnvironment<*>, emoji: String) {
         env.bot
             .setMessageReaction(
                 chatId = ChatId.fromId(env.message.chat.id),

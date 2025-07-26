@@ -23,7 +23,7 @@ class ThisCommandHandlerService(
     private val confirmCommands = listOf("this", "!soxok")
     private val mediaFileName = "media"
 
-    suspend fun create(env: MessageHandlerEnvironment) {
+    fun create(env: MessageHandlerEnvironment) {
         if (!shouldHandleMessage(env)) return
 
         val replyToMessage = env.message.replyToMessage ?: return
@@ -54,7 +54,7 @@ class ThisCommandHandlerService(
         return isApprover && isConfirmCommand
     }
 
-    private suspend fun reactToMessage(env: MessageHandlerEnvironment, emoji: String) {
+    private fun reactToMessage(env: MessageHandlerEnvironment, emoji: String) {
         env.bot
             .setMessageReaction(
                 chatId = ChatId.fromId(env.message.chat.id),
