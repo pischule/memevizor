@@ -1,4 +1,4 @@
-FROM docker.io/eclipse-temurin:17
+FROM docker.io/eclipse-temurin:21
 RUN apt-get update \
     && apt-get install -y ffmpeg \
     && apt-get clean \
