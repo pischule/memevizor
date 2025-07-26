@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dynamic Media Refresh</title>
+    <link rel="icon"
+          href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📺</text></svg>">
+    <title>memevizor</title>
     <style>
         /* Basic styling to make the media fill the container */
         html, body {
@@ -31,7 +33,7 @@
 <main id="media-container"></main>
 
 <script defer>
-    const fileUrl = '_';
+    const fileUrl = 'media';
     const refreshIntervalMs = 15_000; // 15 seconds
 
     const mediaContainer = document.getElementById("media-container");

@@ -3,18 +3,14 @@ package com.pischule.memevizor.bot
 import com.github.kotlintelegrambot.Bot
 import com.github.kotlintelegrambot.bot
 import com.github.kotlintelegrambot.dispatch
-import com.github.kotlintelegrambot.dispatcher.command
+import com.github.kotlintelegrambot.dispatcher.*
 import com.github.kotlintelegrambot.dispatcher.handlers.media.MediaHandlerEnvironment
-import com.github.kotlintelegrambot.dispatcher.message
-import com.github.kotlintelegrambot.dispatcher.photos
-import com.github.kotlintelegrambot.dispatcher.video
 import com.github.kotlintelegrambot.entities.ChatId
 import com.github.kotlintelegrambot.entities.Message
 import com.github.kotlintelegrambot.entities.ParseMode
 import com.pischule.memevizor.bot.handler.MediaHandlerService
 import com.pischule.memevizor.bot.handler.ThisCommandHandlerService
-import com.pischule.memevizor.util.getMaxResPhotoId
-import com.pischule.memevizor.util.getVideoFileId
+import com.pischule.memevizor.util.getMedia
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.github.oshai.kotlinlogging.withLoggingContext
 import org.springframework.boot.context.properties.EnableConfigurationProperties
@@ -40,19 +36,12 @@ class BotConfiguration(
     }
 
     private fun Bot.Builder.setupDispatchers() = dispatch {
-        message {
-            withLoggingContext(messageContext(message)) {
-                try {
-                    thisCommandHandlerService.create(this)
-                } catch (e: Error) {
-                    logger.error(e) { "Error while handling message" }
-                }
-            }
-        }
+        message { withLogAndErrorHandling(message) { thisCommandHandlerService.create(this) } }
         photos { handleMedia() }
         video { handleMedia() }
+        videoNote { handleMedia() }
         command("whoami") {
-            withLoggingContext(messageContext(message)) {
+            withLogAndErrorHandling(message) {
                 bot.sendMessage(
                         chatId = ChatId.fromId(message.chat.id),
                         text = "chatId: `${message.chat.id}`\nuserId: `${message.from?.id}`",
@@ -64,21 +53,22 @@ class BotConfiguration(
     }
 
     private suspend fun MediaHandlerEnvironment<*>.handleMedia() {
-        withLoggingContext(messageContext(message)) {
-            try {
-                mediaHandlerService.create(this)
-            } catch (e: Error) {
-                logger.error(e) { "Error while handling photo" }
-            }
-        }
+        withLogAndErrorHandling(message) { mediaHandlerService.create(this) }
     }
 
-    private fun messageContext(message: Message): Map<String, String?> =
-        mapOf(
+    private suspend fun withLogAndErrorHandling(message: Message, block: suspend () -> Unit) {
+        withLoggingContext(
             "message_id" to message.messageId.toString(),
             "chat_id" to message.chat.id.toString(),
             "from_user_id" to message.from?.id.toString(),
             "from_user_username" to message.from?.username.toString(),
-            "file_id" to (message.getMaxResPhotoId() ?: message.getVideoFileId()),
-        )
+            "file_id" to (message.getMedia()?.fileId),
+        ) {
+            try {
+                block.invoke()
+            } catch (e: Exception) {
+                logger.error(e) { "Error while handling message" }
+            }
+        }
+    }
 }

@@ -2,6 +2,21 @@ package com.pischule.memevizor.util
 
 import com.github.kotlintelegrambot.entities.Message
 
-fun Message.getMaxResPhotoId(): String? = photo?.lastOrNull()?.fileId
+fun Message.getMedia(): MessageMedia? {
+    photo?.lastOrNull()?.fileId?.let { fileId ->
+        return MessageMedia(fileId, MessageMedia.Type.PHOTO)
+    }
 
-fun Message.getVideoFileId(): String? = video?.fileId ?: videoNote?.fileId
+    (video?.fileId ?: videoNote?.fileId)?.let { fileId ->
+        return MessageMedia(fileId, MessageMedia.Type.VIDEO)
+    }
+
+    return null
+}
+
+data class MessageMedia(val fileId: String, val type: Type) {
+    enum class Type {
+        PHOTO,
+        VIDEO,
+    }
+}

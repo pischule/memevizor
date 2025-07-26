@@ -6,9 +6,8 @@ import com.github.kotlintelegrambot.entities.ChatId
 import com.github.kotlintelegrambot.entities.reaction.ReactionType
 import com.pischule.memevizor.bot.BotProps
 import com.pischule.memevizor.upload.FileUploaderService
-import com.pischule.memevizor.util.getMaxResPhotoId
-import com.pischule.memevizor.util.getVideoFileId
-import com.pischule.memevizor.video.VideoEncoderService
+import com.pischule.memevizor.util.*
+import com.pischule.memevizor.video.VideoTranscoderService
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.github.oshai.kotlinlogging.withLoggingContext
 import org.springframework.stereotype.Component
@@ -19,39 +18,30 @@ private val logger = KotlinLogging.logger {}
 class ThisCommandHandlerService(
     private val botProps: BotProps,
     private val fileUploaderService: FileUploaderService,
-    private val videoEncoderService: VideoEncoderService,
+    private val videoTranscoderService: VideoTranscoderService,
 ) {
     private val confirmCommands = listOf("this", "!soxok")
+    private val mediaFileName = "media"
 
     suspend fun create(env: MessageHandlerEnvironment) {
         if (!shouldHandleMessage(env)) return
 
         val replyToMessage = env.message.replyToMessage ?: return
-
-        val imageFileId = replyToMessage.getMaxResPhotoId()
-        val videoFileId = replyToMessage.getVideoFileId()
-        val fileId = imageFileId ?: videoFileId ?: return
+        val media = replyToMessage.getMedia() ?: return
 
         env.bot.sendChatAction(ChatId.fromId(env.message.chat.id), ChatAction.TYPING)
-        withLoggingContext("file_id" to fileId) {
-            val fileBytes = env.bot.downloadFileBytes(fileId) ?: return
+        withLoggingContext("file_id" to media.fileId) {
+            val fileBytes = env.bot.downloadFileBytes(media.fileId) ?: return
             logger.info { "Downloaded a file from Telegram, size=${fileBytes.size}" }
 
-            val convertedBytes =
-                if (videoFileId != null) {
-                    videoEncoderService.encodeToWebm(fileBytes)
-                } else {
-                    fileBytes
+            val (convertedBytes, contentType) =
+                when (media.type) {
+                    MessageMedia.Type.PHOTO -> Pair(fileBytes, "image/jpeg")
+                    MessageMedia.Type.VIDEO ->
+                        Pair(videoTranscoderService.transcode(fileBytes), "video/webm")
                 }
 
-            val contentType =
-                if (videoFileId != null) {
-                    "video/webm"
-                } else {
-                    "image/jpeg"
-                }
-
-            fileUploaderService.uploadFile(convertedBytes, "_", contentType)
+            fileUploaderService.uploadFile(convertedBytes, mediaFileName, contentType)
 
             reactToMessage(env, "👍")
         }
@@ -61,11 +51,7 @@ class ThisCommandHandlerService(
         val isApprover = env.message.from?.id?.let { botProps.approverUserIds.contains(it) } == true
         val command = env.message.text?.lowercase()
         val isConfirmCommand = command in confirmCommands
-        val hasMediaReply =
-            env.message.replyToMessage?.let {
-                it.photo?.isNotEmpty() == true || it.video != null
-            } == true
-        return isApprover && isConfirmCommand && hasMediaReply
+        return isApprover && isConfirmCommand
     }
 
     private suspend fun reactToMessage(env: MessageHandlerEnvironment, emoji: String) {
