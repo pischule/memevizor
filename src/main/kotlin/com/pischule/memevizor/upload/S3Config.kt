@@ -11,8 +11,8 @@ class S3Config {
     @Bean
     fun s3Client(s3Props: S3Props): MinioClient =
         MinioClient.builder()
-            .endpoint("https://storage.yandexcloud.net")
-            .region("ru-central1")
+            .endpoint(s3Props.endpoint)
+            .region(s3Props.region)
             .credentials(s3Props.accessKeyId, s3Props.secretAccessKey)
             .build()
 }

@@ -1,3 +1,8 @@
 bot.forward-chat-id=<?>
-bot.approver<?>
-bot.token=<bot token>
+bot.approver-user-ids[0]=<?>
+bot.token=
+s3.endpoint=https://storage.yandexcloud.net
+s3.region=ru-central1
+s3.bucket=memevizor-test
+s3.access-key-id=<?>
+s3.secret-access-key=<?>
