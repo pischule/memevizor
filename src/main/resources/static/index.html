@@ -26,11 +26,40 @@
             height: 100%;
             object-fit: contain;
         }
+
+        /* QR Code styling */
+        :root {
+            --qr-size: 120px;  /* Configurable QR code size */
+            --qr-margin: 20px; /* Configurable distance from screen edge */
+        }
+        
+        #qr-container {
+            position: fixed;
+            bottom: var(--qr-margin);
+            right: var(--qr-margin);
+            z-index: 1000;
+            opacity: 0.8;
+            transition: opacity 0.3s ease;
+        }
+        
+        #qr-container:hover {
+            opacity: 1;
+        }
+        
+        #qr-code {
+            width: var(--qr-size);
+            height: var(--qr-size);
+            display: block;
+        }
     </style>
 </head>
 <body>
 
 <main id="media-container"></main>
+
+<div id="qr-container">
+    <img id="qr-code" src="qr.svg" alt="QR Code">
+</div>
 
 <script defer>
     const fileUrl = 'media';
