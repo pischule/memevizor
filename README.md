@@ -58,4 +58,4 @@ Contributions welcome! Please:
 3. Submit a pull request
 
 ## License
-MIT License (replace with your preferred license)
+GNU GPLv3
