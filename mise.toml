@@ -1,14 +1,6 @@
 [tools]
 java = "temurin-21"
 
-[tasks.release]
-description = 'Build and push docker image'
-run = [
-    './gradlew build',
-    'docker build -t memevizor:latest .',
-    'docker pussh memevizor:latest apps0.pischule.com'
-]
-
 [tasks.fmt]
 description = 'Fourmat source code'
 run = './gradlew :spotlessApply'

@@ -17,45 +17,91 @@ The system consists of:
 - **Spring Boot**: Kotlin-based backend with dependency injection
 
 ## Setup
-1. Create `.env` file with:
-```properties
-# Telegram Bot Configuration
-BOT_TOKEN=your_bot_token
-FORWARD_CHAT_ID=your_forward_chat_id
-APPROVER_USER_IDS=id1,id2,id3
 
-# S3 Configuration (for production)
-S3_ACCESS_KEY_ID=your_key
-S3_SECRET_ACCESS_KEY=your_secret
-S3_BUCKET=your_bucket_name
+The application is configured via Spring Boot properties.
+
+### Local Development
+
+1.  Copy the sample local configuration file:
+    ```bash
+    cp src/main/resources/application-local.properties.dist src/main/resources/application-local.properties
+    ```
+
+2.  Edit `src/main/resources/application-local.properties` and fill in your bot details:
+    ```properties
+    # Telegram Bot Configuration
+    bot.token=your_bot_token
+    bot.forward-chat-id=your_forward_chat-id
+    bot.approver-user-ids=id1,id2,id3
+    ```
+
+3.  Run the application with the `local` profile active:
+    ```bash
+    ./gradlew bootRun --args='--spring.profiles.active=local'
+    ```
+    In this mode, memes are stored in memory and are not persisted.
+
+### Production
+
+For a production deployment (e.g., in Docker), you can provide configuration via environment variables or an `application.properties` file.
+
+**Example using environment variables:**
+
+Spring Boot automatically maps environment variables (e.g., `BOT_TOKEN`) to application properties (e.g., `bot.token`).
+
+```bash
+export BOT_TOKEN="your_bot_token"
+export BOT_FORWARD_CHAT_ID="your_forward_chat_id"
+export BOT_APPROVER_USER_IDS="id1,id2,id3"
+
+export S3_ENDPOINT="https://s3.example.com"
+export S3_REGION="us-east-1"
+export S3_BUCKET="your_bucket_name"
+export S3_ACCESS_KEY_ID="your_key"
+export S3_SECRET_ACCESS_KEY="your_secret"
+
+java -jar build/libs/memevizor-*.jar
 ```
 
-2. For local development:
-```bash
-./gradlew bootRun --args='--spring.profiles.active=local'
+**Example `application.properties` file:**
+
+```properties
+# Telegram Bot Configuration
+bot.token=your_bot_token
+bot.forward-chat-id=your_forward_chat_id
+bot.approver-user-ids=id1,id2,id3
+
+# S3 Configuration
+s3.endpoint=https://s3.example.com
+s3.region=us-east-1
+s3.bucket=your_bucket_name
+s3.access-key-id=your_key
+s3.secret-access-key=your_secret
 ```
 
 ## Usage
-1. Send a meme (image/video) to the Telegram bot
-2. Reply with `this` or `!soxok` to approve and upload
-3. View the meme at `http://localhost:8080` (or your deployed URL)
+
+1.  Send a meme (image or video) to the Telegram bot.
+2.  To approve and upload the meme, reply to the message with `this` or `!soxok`.
+3.  View the latest meme at `http://localhost:8080` (or your deployed URL).
 
 ## Deployment
+
 ### Docker
-```bash
-docker build -t memevizor .
-docker run -d -p 8080:8080 memevizor
-```
 
-### Cloud (Heroku/AWS/etc)
-1. Set environment variables
-2. Deploy with your preferred provider
-
-## Contributing
-Contributions welcome! Please:
-1. Fork the repository
-2. Create a feature branch
-3. Submit a pull request
+1.  Run the container with environment variables:
+    ```bash
+    docker run -d \
+      -e BOT_TOKEN='your_bot_token' \
+      -e BOT_FORWARD_CHAT_ID='your_forward_chat_id' \
+      -e BOT_APPROVER_USER_IDS='id1,id2,id3' \
+      -e S3_ENDPOINT='https.s3.example.com' \
+      -e S3_REGION='us-east-1' \
+      -e S3_BUCKET='your_bucket_name' \
+      -e S3_ACCESS_KEY_ID='your_key' \
+      -e S3_SECRET_ACCESS_KEY='your_secret' \
+      ghcr.io/pischule/memevizor:latest
+    ```
 
 ## License
 GNU GPLv3
