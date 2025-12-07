@@ -1,9 +1,9 @@
 plugins {
-    kotlin("jvm") version "2.2.0"
-    kotlin("plugin.spring") version "2.2.0"
-    id("org.springframework.boot") version "3.4.4"
+    kotlin("jvm") version "2.2.21"
+    kotlin("plugin.spring") version "2.2.21"
+    id("org.springframework.boot") version "4.0.0"
     id("io.spring.dependency-management") version "1.1.7"
-    id("com.diffplug.spotless") version "7.0.3"
+    id("com.diffplug.spotless") version "8.1.0"
 }
 
 group = "com.pischule"
@@ -31,7 +31,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("io.github.kotlin-telegram-bot.kotlin-telegram-bot:telegram:6.3.0")
     implementation("io.github.oshai:kotlin-logging-jvm:7.0.3")
-    implementation("io.minio:minio:8.5.17")
+    implementation("io.minio:minio:8.6.0")
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
