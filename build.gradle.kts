@@ -51,6 +51,6 @@ tasks.withType<Test> {
 
 spotless {
   kotlin {
-    ktfmt("0.54").kotlinlangStyle()
+    ktfmt("0.59").kotlinlangStyle()
   }
 }
