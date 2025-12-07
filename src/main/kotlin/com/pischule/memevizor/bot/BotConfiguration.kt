@@ -46,6 +46,7 @@ class BotConfiguration(
         photos { handleMedia() }
         video { handleMedia() }
         videoNote { handleMedia() }
+        document { handleMedia() }
         command("whoami") {
             handleMessage(message) {
                 bot.sendMessage(
