@@ -143,6 +143,12 @@
         }
     }
 
+    function toggleQrVisibility() {
+        const qr = document.getElementById("qr-code");
+        const isVisible = qr.style.display === '';
+        qr.style.display = isVisible ? 'none' : '';
+    }
+
     // --- Event Listeners ---
     document.addEventListener('DOMContentLoaded', refreshMedia); // Initial fetch
     setInterval(refreshMedia, refreshIntervalMs);               // Periodic refresh
@@ -152,6 +158,10 @@
         if (event.code === 'Space') {
             event.preventDefault(); // Prevent page scroll
             refreshMedia();
+        }
+
+        if (event.key === 'q') {
+            toggleQrVisibility()
         }
     });
 </script>
