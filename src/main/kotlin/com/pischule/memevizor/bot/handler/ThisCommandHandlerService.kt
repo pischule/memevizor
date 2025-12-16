@@ -20,7 +20,7 @@ class ThisCommandHandlerService(
     private val fileUploaderService: FileUploaderService,
     private val videoTranscoderService: VideoTranscoderService,
 ) {
-    private val confirmCommands = listOf("this", "!soxok")
+    private val confirmCommands = listOf("this", "true", "!soxok")
     private val mediaFileName = "media"
 
     fun create(env: MessageHandlerEnvironment) {
