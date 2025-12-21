@@ -4,3 +4,7 @@ java = "temurin-21"
 [tasks.fmt]
 description = 'Fourmat source code'
 run = './gradlew :spotlessApply'
+
+[tasks.test]
+description = 'Run tests'
+run = './gradlew check'
