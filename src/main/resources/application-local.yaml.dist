@@ -1,0 +1,11 @@
+bot:
+  forward-chat-id: <?>
+  approver-user-ids:
+    - <?>
+  token: <?>
+s3:
+  endpoint: https://storage.yandexcloud.net
+  region: ru-central1
+  bucket: memevizor-test
+  access-key-id: <?>
+  secret-access-key: <?>
