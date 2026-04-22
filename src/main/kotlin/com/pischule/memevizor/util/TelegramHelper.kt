@@ -21,6 +21,12 @@ fun Message.getMedia(): MessageMedia? {
             return MessageMedia(it.fileId, MessageMedia.Type.VIDEO)
         }
 
+    document
+        ?.takeIf { it.mimeType?.startsWith("image/") == true }
+        ?.let {
+            return MessageMedia(it.fileId, MessageMedia.Type.PHOTO)
+        }
+
     return null
 }
 

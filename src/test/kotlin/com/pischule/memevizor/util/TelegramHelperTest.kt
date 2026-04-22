@@ -74,13 +74,28 @@ class TelegramHelperTest {
     }
 
     @Test
-    fun `getMedia should return null for Document with non-video mimeType`() {
+    fun `getMedia should return photo from Document with image mimeType`() {
         val message =
             Message(
                 messageId = 1L,
                 chat = mockChat,
                 date = 123,
                 document = Document("d1", "d1u", mimeType = "image/jpeg"),
+            )
+
+        val result = message.getMedia()
+
+        result shouldBe MessageMedia(fileId = "d1", type = MessageMedia.Type.PHOTO)
+    }
+
+    @Test
+    fun `getMedia should return null for Document with non-media mimeType`() {
+        val message =
+            Message(
+                messageId = 1L,
+                chat = mockChat,
+                date = 123,
+                document = Document("d1", "d1u", mimeType = "text/plain"),
             )
 
         val result = message.getMedia()
