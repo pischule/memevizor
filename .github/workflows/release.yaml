@@ -4,6 +4,9 @@ on:
   workflow_dispatch:
   push:
     branches: [ main ]
+    tags: [ 'v*' ]
+  pull_request:
+    branches: [ main ]
 
 jobs:
   build-and-publish:
@@ -36,7 +39,9 @@ jobs:
         with:
           images: ghcr.io/${{ github.repository }}
           tags: |
-            type=raw,value=latest,enable=true
+            type=ref,event=tag
+            type=raw,value=main,enable=${{ github.ref == 'refs/heads/main' || github.event_name == 'pull_request' }}
+            type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' }}
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
