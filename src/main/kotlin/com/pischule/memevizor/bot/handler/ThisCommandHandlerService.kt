@@ -8,6 +8,7 @@ import com.pischule.memevizor.util.*
 import com.pischule.memevizor.video.VideoTranscoder
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.github.oshai.kotlinlogging.withLoggingContext
+import org.springframework.context.annotation.Lazy
 import org.springframework.stereotype.Component
 
 private val logger = KotlinLogging.logger {}
@@ -17,7 +18,7 @@ class ThisCommandHandlerService(
     private val botProps: BotProps,
     private val fileStorage: FileStorage,
     private val videoTranscoder: VideoTranscoder,
-    private val botClient: BotClient,
+    @Lazy private val botClient: BotClient,
 ) {
     private val confirmCommands = listOf("this", "true", "!soxok")
     private val mediaFileName = "media"

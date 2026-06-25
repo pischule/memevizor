@@ -16,6 +16,7 @@ import java.util.concurrent.Executors
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.Lazy
 
 private val logger = KotlinLogging.logger {}
 
@@ -25,7 +26,7 @@ class BotConfiguration(
     private val botProps: BotProps,
     private val thisCommandHandlerService: ThisCommandHandlerService,
     private val mediaHandlerService: MediaHandlerService,
-    private val botClient: BotClient,
+    @Lazy private val botClient: BotClient,
 ) {
 
     @Bean

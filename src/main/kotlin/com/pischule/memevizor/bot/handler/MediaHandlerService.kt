@@ -3,10 +3,11 @@ package com.pischule.memevizor.bot.handler
 import com.github.kotlintelegrambot.dispatcher.handlers.media.MediaHandlerEnvironment
 import com.pischule.memevizor.bot.BotClient
 import com.pischule.memevizor.bot.BotProps
+import org.springframework.context.annotation.Lazy
 import org.springframework.stereotype.Service
 
 @Service
-class MediaHandlerService(private val botProps: BotProps, private val botClient: BotClient) {
+class MediaHandlerService(private val botProps: BotProps, @Lazy private val botClient: BotClient) {
 
     fun handle(env: MediaHandlerEnvironment<*>) {
         if (shouldForwardMessage(env)) {
