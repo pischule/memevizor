@@ -12,9 +12,9 @@ import org.springframework.stereotype.Service
 private val logger = KotlinLogging.logger {}
 
 @Service
-class VideoTranscoderService {
+class VideoTranscoderService : VideoTranscoder {
 
-    fun transcode(inputVideo: ByteArray): ByteArray {
+    override fun transcode(inputVideo: ByteArray): ByteArray {
         logger.info { "Started transcoding a video" }
 
         val inputFile = createTempFile()

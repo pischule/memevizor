@@ -1,0 +1,9 @@
+bot:
+  token: test-token
+  forward-chat-id: 2000000000
+  approver-user-ids:
+    - 1000000000
+
+spring:
+  main:
+    lazy-initialization: true

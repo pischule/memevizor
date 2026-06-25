@@ -5,9 +5,7 @@ import com.github.kotlintelegrambot.bot
 import com.github.kotlintelegrambot.dispatch
 import com.github.kotlintelegrambot.dispatcher.*
 import com.github.kotlintelegrambot.dispatcher.handlers.media.MediaHandlerEnvironment
-import com.github.kotlintelegrambot.entities.ChatId
 import com.github.kotlintelegrambot.entities.Message
-import com.github.kotlintelegrambot.entities.ParseMode
 import com.pischule.memevizor.bot.handler.MediaHandlerService
 import com.pischule.memevizor.bot.handler.ThisCommandHandlerService
 import com.pischule.memevizor.util.getMedia
@@ -27,6 +25,7 @@ class BotConfiguration(
     private val botProps: BotProps,
     private val thisCommandHandlerService: ThisCommandHandlerService,
     private val mediaHandlerService: MediaHandlerService,
+    private val botClient: BotClient,
 ) {
 
     @Bean
@@ -49,12 +48,10 @@ class BotConfiguration(
         document { handleMedia() }
         command("whoami") {
             handleMessage(message) {
-                bot.sendMessage(
-                        chatId = ChatId.fromId(message.chat.id),
-                        text = "chatId: `${message.chat.id}`\nuserId: `${message.from?.id}`",
-                        parseMode = ParseMode.MARKDOWN_V2,
-                    )
-                    .onError { logger.warn { "Failed to reply to whoami command: $it" } }
+                botClient.sendMessage(
+                    chatId = message.chat.id,
+                    text = "chatId: `${message.chat.id}`\nuserId: `${message.from?.id}`",
+                )
             }
         }
     }

@@ -5,10 +5,12 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 import jakarta.annotation.PostConstruct
 import jakarta.annotation.PreDestroy
 import java.util.concurrent.ExecutorService
+import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Service
 
 private val logger = KotlinLogging.logger {}
 
+@Profile("!test")
 @Service
 class BotService(private val bot: Bot, private val botPollingExecutor: ExecutorService) {
 

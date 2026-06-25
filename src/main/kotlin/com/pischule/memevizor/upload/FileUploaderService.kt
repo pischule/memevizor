@@ -7,14 +7,17 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 import io.github.oshai.kotlinlogging.withLoggingContext
 import kotlinx.coroutines.runBlocking
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean
+import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Service
 
 private val logger = KotlinLogging.logger {}
 
+@Profile("!test")
 @ConditionalOnBean(S3Config::class)
 @Service
-class FileUploaderService(private val s3Client: S3Client, private val s3Props: S3Props) {
-    fun uploadFile(fileBytes: ByteArray, filename: String, contentType: String) {
+class FileUploaderService(private val s3Client: S3Client, private val s3Props: S3Props) :
+    FileStorage {
+    override fun upload(fileBytes: ByteArray, filename: String, contentType: String) {
         withLoggingContext("filename" to filename, "bucket" to s3Props.bucket) {
             val request = PutObjectRequest {
                 bucket = s3Props.bucket
