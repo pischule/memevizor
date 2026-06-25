@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service
 @Service
 class MediaHandlerService(private val botProps: BotProps, private val botClient: BotClient) {
 
-    fun create(env: MediaHandlerEnvironment<*>) {
+    fun handle(env: MediaHandlerEnvironment<*>) {
         if (shouldForwardMessage(env)) {
             botClient.forwardMessage(
                 chatId = botProps.forwardChatId,

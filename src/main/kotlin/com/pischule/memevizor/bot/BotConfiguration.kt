@@ -41,7 +41,7 @@ class BotConfiguration(
     @Bean fun botHandlerExecutor(): ExecutorService = Executors.newVirtualThreadPerTaskExecutor()
 
     private fun Bot.Builder.setupDispatchers() = dispatch {
-        message { handleMessage(message) { thisCommandHandlerService.create(this) } }
+        message { handleMessage(message) { thisCommandHandlerService.handle(this) } }
         photos { handleMedia() }
         video { handleMedia() }
         videoNote { handleMedia() }
@@ -57,7 +57,7 @@ class BotConfiguration(
     }
 
     private fun MediaHandlerEnvironment<*>.handleMedia() {
-        handleMessage(message) { mediaHandlerService.create(this) }
+        handleMessage(message) { mediaHandlerService.handle(this) }
     }
 
     private fun handleMessage(message: Message, block: () -> Unit) {

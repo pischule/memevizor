@@ -51,7 +51,9 @@ class HappyPathIntegrationTest {
 
     @Test
     fun `happy path - user sends photo, bot forwards, approver confirms, photo is uploaded`() {
-        // == Step 1: user sends a photo to the bot chat ==
+        // == Step 1: user sends a photo ==
+
+        // Given: a user sends a photo to the bot chat
         val mediaMessage =
             Message(
                 messageId = 10L,
@@ -59,6 +61,8 @@ class HappyPathIntegrationTest {
                 date = 200,
                 photo = listOf(PhotoSize("p1", "p1u", 100, 100)),
             )
+
+        // When: the media handler processes the photo
         val mediaEnv =
             MediaHandlerEnvironment(
                 bot,
@@ -66,15 +70,16 @@ class HappyPathIntegrationTest {
                 mediaMessage,
                 "dummy",
             )
+        mediaHandler.handle(mediaEnv)
 
-        mediaHandler.create(mediaEnv)
-
-        // Then: message was forwarded to the approver chat
+        // Then: the photo is forwarded to the approver chat
         verify(botClient).forwardMessage(eq(approverChatId), eq(userChatId), eq(10L))
-        // Then: reaction 👀 was added to the user's message
+        // Then: a 👀 reaction is added to the user's message
         verify(botClient).setMessageReaction(eq(userChatId), eq(10L), eq("👀"))
 
-        // == Step 2: approver replies "this" on the forwarded message ==
+        // == Step 2: approver confirms the forwarded photo ==
+
+        // Given: the forwarded photo exists in the approver chat
         val forwardedMessage =
             Message(
                 messageId = 20L,
@@ -82,6 +87,7 @@ class HappyPathIntegrationTest {
                 date = 210,
                 photo = listOf(PhotoSize("p1", "p1u", 100, 100)),
             )
+        // Given: the approver replies with "this" on the forwarded message
         val approveMessage =
             Message(
                 messageId = 21L,
@@ -91,18 +97,21 @@ class HappyPathIntegrationTest {
                 text = "this",
                 replyToMessage = forwardedMessage,
             )
+        whenever(botClient.downloadFileBytes("p1")).thenReturn(testImageBytes)
+
+        // When: the this-command handler processes the approver's reply
         val approveEnv =
             MessageHandlerEnvironment(
                 bot,
                 Update(updateId = 2, message = approveMessage),
                 approveMessage,
             )
+        thisCommandHandler.handle(approveEnv)
 
-        whenever(botClient.downloadFileBytes("p1")).thenReturn(testImageBytes)
-
-        thisCommandHandler.create(approveEnv)
-
-        // Then: file was downloaded, uploaded, and reaction 👍 added — in order
+        // Then: the photo is downloaded
+        // Then: the photo is uploaded to storage
+        // Then: a 👍 reaction is added to the approver's message
+        // Then: the video transcoder is never called
         val inOrder = inOrder(botClient, fileStorage, videoTranscoder)
         inOrder.verify(botClient).downloadFileBytes("p1")
         inOrder.verify(fileStorage).upload(testImageBytes, "media", "image/jpeg")
@@ -114,7 +123,9 @@ class HappyPathIntegrationTest {
     fun `happy path - user sends video, bot forwards, approver confirms, video is transcoded and uploaded`() {
         val videoFileId = "v999"
 
-        // == Step 1: user sends a video to the bot chat ==
+        // == Step 1: user sends a video ==
+
+        // Given: a user sends a video to the bot chat
         val mediaMessage =
             Message(
                 messageId = 30L,
@@ -122,6 +133,8 @@ class HappyPathIntegrationTest {
                 date = 300,
                 video = Video(videoFileId, "vu", 640, 480, 30),
             )
+
+        // When: the media handler processes the video
         val mediaEnv =
             MediaHandlerEnvironment(
                 bot,
@@ -129,15 +142,16 @@ class HappyPathIntegrationTest {
                 mediaMessage,
                 "dummy",
             )
+        mediaHandler.handle(mediaEnv)
 
-        mediaHandler.create(mediaEnv)
-
-        // Then: video was forwarded to the approver chat
+        // Then: the video is forwarded to the approver chat
         verify(botClient).forwardMessage(eq(approverChatId), eq(userChatId), eq(30L))
-        // Then: reaction 👀 was added
+        // Then: a 👀 reaction is added to the user's message
         verify(botClient).setMessageReaction(eq(userChatId), eq(30L), eq("👀"))
 
-        // == Step 2: approver replies "this" on the forwarded video ==
+        // == Step 2: approver confirms the forwarded video ==
+
+        // Given: the forwarded video exists in the approver chat
         val forwardedMessage =
             Message(
                 messageId = 40L,
@@ -145,6 +159,7 @@ class HappyPathIntegrationTest {
                 date = 310,
                 video = Video(videoFileId, "vu", 640, 480, 30),
             )
+        // Given: the approver replies with "this" on the forwarded message
         val approveMessage =
             Message(
                 messageId = 41L,
@@ -154,22 +169,21 @@ class HappyPathIntegrationTest {
                 text = "this",
                 replyToMessage = forwardedMessage,
             )
+        val rawVideoBytes = byteArrayOf(0x00, 0x01, 0x02)
+        val transcodedBytes = byteArrayOf(0x1A.toByte(), 0x45, 0xDF.toByte())
+        whenever(botClient.downloadFileBytes(videoFileId)).thenReturn(rawVideoBytes)
+        whenever(videoTranscoder.transcode(rawVideoBytes)).thenReturn(transcodedBytes)
+
+        // When: the this-command handler processes the approver's reply
         val approveEnv =
             MessageHandlerEnvironment(
                 bot,
                 Update(updateId = 4, message = approveMessage),
                 approveMessage,
             )
+        thisCommandHandler.handle(approveEnv)
 
-        val rawVideoBytes = byteArrayOf(0x00, 0x01, 0x02)
-        val transcodedBytes = byteArrayOf(0x1A.toByte(), 0x45, 0xDF.toByte())
-
-        whenever(botClient.downloadFileBytes(videoFileId)).thenReturn(rawVideoBytes)
-        whenever(videoTranscoder.transcode(rawVideoBytes)).thenReturn(transcodedBytes)
-
-        thisCommandHandler.create(approveEnv)
-
-        // Then: downloaded, transcoded, uploaded, reacted — in order
+        // Then: the video is downloaded, transcoded, uploaded, and reacted — in order
         val inOrder = inOrder(botClient, fileStorage, videoTranscoder)
         inOrder.verify(botClient).downloadFileBytes(videoFileId)
         inOrder.verify(videoTranscoder).transcode(rawVideoBytes)
@@ -181,6 +195,7 @@ class HappyPathIntegrationTest {
 
     @Test
     fun `should ignore message from non-approver`() {
+        // Given: a non-approver user replies "this" on a forwarded media message
         val nonApproverUser = User(id = 999L, isBot = false, firstName = "Stranger")
         val mediaMessage =
             Message(
@@ -198,20 +213,23 @@ class HappyPathIntegrationTest {
                 text = "this",
                 replyToMessage = mediaMessage,
             )
+
+        // When: the this-command handler processes the message
         val env =
             MessageHandlerEnvironment(
                 bot,
                 Update(updateId = 3, message = approveMessage),
                 approveMessage,
             )
+        thisCommandHandler.handle(env)
 
-        thisCommandHandler.create(env)
-
+        // Then: no interactions with any dependency occur
         verifyNoInteractions(botClient, fileStorage, videoTranscoder)
     }
 
     @Test
     fun `should ignore non-confirm command text`() {
+        // Given: the approver replies with a non-confirm text on a forwarded media message
         val mediaMessage =
             Message(
                 messageId = 1L,
@@ -228,20 +246,23 @@ class HappyPathIntegrationTest {
                 text = "nope",
                 replyToMessage = mediaMessage,
             )
+
+        // When: the this-command handler processes the message
         val env =
             MessageHandlerEnvironment(
                 bot,
                 Update(updateId = 4, message = approveMessage),
                 approveMessage,
             )
+        thisCommandHandler.handle(env)
 
-        thisCommandHandler.create(env)
-
+        // Then: no interactions with any dependency occur
         verifyNoInteractions(botClient, fileStorage, videoTranscoder)
     }
 
     @Test
     fun `should ignore message that is not a reply`() {
+        // Given: the approver sends a "this" message that is not a reply
         val approveMessage =
             Message(
                 messageId = 2L,
@@ -250,21 +271,24 @@ class HappyPathIntegrationTest {
                 from = approverUser,
                 text = "this",
             )
+
+        // When: the this-command handler processes the message
         val env =
             MessageHandlerEnvironment(
                 bot,
                 Update(updateId = 5, message = approveMessage),
                 approveMessage,
             )
+        thisCommandHandler.handle(env)
 
-        thisCommandHandler.create(env)
-
+        // Then: no interactions with any dependency occur
         verifyNoInteractions(botClient, fileStorage, videoTranscoder)
     }
 
     @ParameterizedTest
     @ValueSource(strings = ["this", "true", "!soxok", "THIS", "tRuE"])
     fun `should accept alternative confirm commands`(command: String) {
+        // Given: the approver replies with a valid confirm command variant on a forwarded photo
         val mediaMessage =
             Message(
                 messageId = 1L,
@@ -281,17 +305,18 @@ class HappyPathIntegrationTest {
                 text = command,
                 replyToMessage = mediaMessage,
             )
+        whenever(botClient.downloadFileBytes("px")).thenReturn(testImageBytes)
+
+        // When: the this-command handler processes the message
         val env =
             MessageHandlerEnvironment(
                 bot,
                 Update(updateId = 6, message = approveMessage),
                 approveMessage,
             )
+        thisCommandHandler.handle(env)
 
-        whenever(botClient.downloadFileBytes("px")).thenReturn(testImageBytes)
-
-        thisCommandHandler.create(env)
-
+        // Then: the photo file is downloaded
         verify(botClient).downloadFileBytes("px")
     }
 
@@ -299,6 +324,7 @@ class HappyPathIntegrationTest {
 
     @Test
     fun `media handler should forward message from user chat`() {
+        // Given: a user sends a photo to the bot chat (not the forward chat)
         val mediaMessage =
             Message(
                 messageId = 10L,
@@ -306,6 +332,8 @@ class HappyPathIntegrationTest {
                 date = 200,
                 photo = listOf(PhotoSize("pf", "pfu", 200, 200)),
             )
+
+        // When: the media handler processes the photo
         val env =
             MediaHandlerEnvironment(
                 bot,
@@ -313,15 +341,17 @@ class HappyPathIntegrationTest {
                 mediaMessage,
                 "dummy",
             )
+        mediaHandler.handle(env)
 
-        mediaHandler.create(env)
-
+        // Then: the photo is forwarded to the approver chat
         verify(botClient).forwardMessage(eq(approverChatId), eq(userChatId), eq(10L))
+        // Then: a 👀 reaction is added to the user's message
         verify(botClient).setMessageReaction(eq(userChatId), eq(10L), eq("👀"))
     }
 
     @Test
     fun `media handler should NOT forward message from the forward chat itself`() {
+        // Given: a message is sent directly in the forward (approver) chat
         val mediaMessage =
             Message(
                 messageId = 11L,
@@ -329,6 +359,8 @@ class HappyPathIntegrationTest {
                 date = 201,
                 photo = listOf(PhotoSize("pf2", "pfu2", 200, 200)),
             )
+
+        // When: the media handler processes the photo
         val env =
             MediaHandlerEnvironment(
                 bot,
@@ -336,10 +368,11 @@ class HappyPathIntegrationTest {
                 mediaMessage,
                 "dummy",
             )
+        mediaHandler.handle(env)
 
-        mediaHandler.create(env)
-
+        // Then: the message is NOT forwarded
         verify(botClient, never()).forwardMessage(any(), any(), any())
+        // Then: a 👀 reaction is still added
         verify(botClient).setMessageReaction(eq(approverChatId), eq(11L), eq("👀"))
     }
 }

@@ -22,7 +22,7 @@ class ThisCommandHandlerService(
     private val confirmCommands = listOf("this", "true", "!soxok")
     private val mediaFileName = "media"
 
-    fun create(env: MessageHandlerEnvironment) {
+    fun handle(env: MessageHandlerEnvironment) {
         if (!shouldHandleMessage(env)) return
 
         val replyToMessage = env.message.replyToMessage ?: return
