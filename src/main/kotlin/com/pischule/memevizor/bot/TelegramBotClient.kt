@@ -6,12 +6,10 @@ import com.github.kotlintelegrambot.entities.ChatId
 import com.github.kotlintelegrambot.entities.ParseMode
 import com.github.kotlintelegrambot.entities.reaction.ReactionType
 import io.github.oshai.kotlinlogging.KotlinLogging
-import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Component
 
 private val logger = KotlinLogging.logger {}
 
-@Profile("!test")
 @Component
 class TelegramBotClient(private val bot: Bot) : BotClient {
 

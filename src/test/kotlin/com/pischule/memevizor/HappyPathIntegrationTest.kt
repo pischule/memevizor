@@ -14,18 +14,16 @@ import com.pischule.memevizor.bot.handler.MediaHandlerService
 import com.pischule.memevizor.bot.handler.ThisCommandHandlerService
 import com.pischule.memevizor.upload.FileStorage
 import com.pischule.memevizor.video.VideoTranscoder
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
 import org.mockito.kotlin.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.context.annotation.Import
 import org.springframework.test.context.ActiveProfiles
+import org.springframework.test.context.bean.override.mockito.MockitoBean
 
 @ActiveProfiles("test")
-@Import(TestConfig::class)
 @SpringBootTest
 class HappyPathIntegrationTest {
 
@@ -33,11 +31,11 @@ class HappyPathIntegrationTest {
 
     @Autowired private lateinit var mediaHandler: MediaHandlerService
 
-    @Autowired private lateinit var botClient: BotClient
+    @MockitoBean private lateinit var botClient: BotClient
 
-    @Autowired private lateinit var fileStorage: FileStorage
+    @MockitoBean private lateinit var fileStorage: FileStorage
 
-    @Autowired private lateinit var videoTranscoder: VideoTranscoder
+    @MockitoBean private lateinit var videoTranscoder: VideoTranscoder
 
     private val approverChatId = 2000000000L
     private val approverUserId = 1000000000L
@@ -48,11 +46,6 @@ class HappyPathIntegrationTest {
     private val approverUser = User(id = approverUserId, isBot = false, firstName = "Approver")
     private val bot = mock<Bot>()
     private val testImageBytes = byteArrayOf(0xFF.toByte(), 0xD8.toByte(), 0xFF.toByte())
-
-    @BeforeEach
-    fun setUp() {
-        reset(botClient, fileStorage, videoTranscoder)
-    }
 
     // --------------- Happy paths ---------------
 
