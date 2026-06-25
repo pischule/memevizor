@@ -16,6 +16,8 @@ import com.pischule.memevizor.upload.FileStorage
 import com.pischule.memevizor.video.VideoTranscoder
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.ValueSource
 import org.mockito.kotlin.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -267,39 +269,37 @@ class HappyPathIntegrationTest {
         verifyNoInteractions(botClient, fileStorage, videoTranscoder)
     }
 
-    @Test
-    fun `should accept alternative confirm commands`() {
-        listOf("this", "true", "!soxok", "THIS", "tRuE").forEach { command ->
-            val mediaMessage =
-                Message(
-                    messageId = 1L,
-                    chat = approverChat,
-                    date = 123,
-                    photo = listOf(PhotoSize("px", "pxu", 100, 100)),
-                )
-            val approveMessage =
-                Message(
-                    messageId = 2L,
-                    chat = approverChat,
-                    date = 124,
-                    from = approverUser,
-                    text = command,
-                    replyToMessage = mediaMessage,
-                )
-            val env =
-                MessageHandlerEnvironment(
-                    bot,
-                    Update(updateId = 6, message = approveMessage),
-                    approveMessage,
-                )
+    @ParameterizedTest
+    @ValueSource(strings = ["this", "true", "!soxok", "THIS", "tRuE"])
+    fun `should accept alternative confirm commands`(command: String) {
+        val mediaMessage =
+            Message(
+                messageId = 1L,
+                chat = approverChat,
+                date = 123,
+                photo = listOf(PhotoSize("px", "pxu", 100, 100)),
+            )
+        val approveMessage =
+            Message(
+                messageId = 2L,
+                chat = approverChat,
+                date = 124,
+                from = approverUser,
+                text = command,
+                replyToMessage = mediaMessage,
+            )
+        val env =
+            MessageHandlerEnvironment(
+                bot,
+                Update(updateId = 6, message = approveMessage),
+                approveMessage,
+            )
 
-            whenever(botClient.downloadFileBytes("px")).thenReturn(testImageBytes)
+        whenever(botClient.downloadFileBytes("px")).thenReturn(testImageBytes)
 
-            thisCommandHandler.create(env)
+        thisCommandHandler.create(env)
 
-            verify(botClient).downloadFileBytes("px")
-            reset(botClient, fileStorage, videoTranscoder)
-        }
+        verify(botClient).downloadFileBytes("px")
     }
 
     // --------------- Edge cases: MediaHandlerService ---------------
