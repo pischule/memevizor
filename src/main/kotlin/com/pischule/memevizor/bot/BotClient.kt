@@ -1,5 +1,7 @@
 package com.pischule.memevizor.bot
 
+import com.github.kotlintelegrambot.entities.ParseMode
+
 interface BotClient {
     fun downloadFileBytes(fileId: String): ByteArray?
 
@@ -9,5 +11,9 @@ interface BotClient {
 
     fun sendChatAction(chatId: Long)
 
-    fun sendMessage(chatId: Long, text: String)
+    fun sendMessage(
+        chatId: Long,
+        text: String,
+        parseMode: ParseMode? = ParseMode.MARKDOWN_V2,
+    )
 }

@@ -6,6 +6,8 @@ import com.github.kotlintelegrambot.dispatch
 import com.github.kotlintelegrambot.dispatcher.*
 import com.github.kotlintelegrambot.dispatcher.handlers.media.MediaHandlerEnvironment
 import com.github.kotlintelegrambot.entities.Message
+import com.github.kotlintelegrambot.extensions.filters.Filter
+import com.pischule.memevizor.bot.handler.AdminReplyHandlerService
 import com.pischule.memevizor.bot.handler.MediaHandlerService
 import com.pischule.memevizor.bot.handler.ThisCommandHandlerService
 import com.pischule.memevizor.util.getMedia
@@ -26,6 +28,7 @@ class BotConfiguration(
     private val botProps: BotProps,
     private val thisCommandHandlerService: ThisCommandHandlerService,
     private val mediaHandlerService: MediaHandlerService,
+    private val adminReplyHandlerService: AdminReplyHandlerService,
     @Lazy private val botClient: BotClient,
 ) {
 
@@ -43,6 +46,9 @@ class BotConfiguration(
 
     private fun Bot.Builder.setupDispatchers() = dispatch {
         message { handleMessage(message) { thisCommandHandlerService.handle(this) } }
+        message(Filter.Reply and Filter.Chat(botProps.forwardChatId)) {
+            handleMessage(message) { adminReplyHandlerService.handle(this) }
+        }
         photos { handleMedia() }
         video { handleMedia() }
         videoNote { handleMedia() }

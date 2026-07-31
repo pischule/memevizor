@@ -36,11 +36,15 @@ class TelegramBotClient(private val bot: Bot) : BotClient {
         bot.sendChatAction(ChatId.fromId(chatId), ChatAction.TYPING)
     }
 
-    override fun sendMessage(chatId: Long, text: String) {
+    override fun sendMessage(
+        chatId: Long,
+        text: String,
+        parseMode: ParseMode?,
+    ) {
         bot.sendMessage(
                 chatId = ChatId.fromId(chatId),
                 text = text,
-                parseMode = ParseMode.MARKDOWN_V2,
+                parseMode = parseMode,
             )
             .onError { logger.warn { "Failed to send message: $it" } }
     }

@@ -5,11 +5,13 @@ import com.github.kotlintelegrambot.dispatcher.handlers.MessageHandlerEnvironmen
 import com.github.kotlintelegrambot.dispatcher.handlers.media.MediaHandlerEnvironment
 import com.github.kotlintelegrambot.entities.Chat
 import com.github.kotlintelegrambot.entities.Message
+import com.github.kotlintelegrambot.entities.MessageOrigin
 import com.github.kotlintelegrambot.entities.Update
 import com.github.kotlintelegrambot.entities.User
 import com.github.kotlintelegrambot.entities.files.PhotoSize
 import com.github.kotlintelegrambot.entities.files.Video
 import com.pischule.memevizor.bot.BotClient
+import com.pischule.memevizor.bot.handler.AdminReplyHandlerService
 import com.pischule.memevizor.bot.handler.MediaHandlerService
 import com.pischule.memevizor.bot.handler.ThisCommandHandlerService
 import com.pischule.memevizor.upload.FileStorage
@@ -30,6 +32,8 @@ class HappyPathIntegrationTest {
     @Autowired private lateinit var thisCommandHandler: ThisCommandHandlerService
 
     @Autowired private lateinit var mediaHandler: MediaHandlerService
+
+    @Autowired private lateinit var adminReplyHandler: AdminReplyHandlerService
 
     @MockitoBean private lateinit var botClient: BotClient
 
@@ -347,6 +351,211 @@ class HappyPathIntegrationTest {
         verify(botClient).forwardMessage(eq(approverChatId), eq(userChatId), eq(10L))
         // Then: a 👀 reaction is added to the user's message
         verify(botClient).setMessageReaction(eq(userChatId), eq(10L), eq("👀"))
+    }
+
+    // --------------- Admin reply handler ---------------
+
+    @Test
+    fun `admin reply to forwarded message should send text to original user`() {
+        // Given: a forwarded message from user in the approver chat
+        val forwardedMessage =
+            Message(
+                messageId = 10L,
+                chat = approverChat,
+                date = 100,
+                forwardOrigin = MessageOrigin.User(date = 99, senderUser = User(id = userChatId, isBot = false, firstName = "User")),
+            )
+        // Given: the approver replies with text
+        val replyMessage =
+            Message(
+                messageId = 11L,
+                chat = approverChat,
+                date = 101,
+                from = approverUser,
+                text = "nice meme!",
+                replyToMessage = forwardedMessage,
+            )
+
+        // When: the admin reply handler processes the message
+        val env =
+            MessageHandlerEnvironment(
+                bot,
+                Update(updateId = 5, message = replyMessage),
+                replyMessage,
+            )
+        adminReplyHandler.handle(env)
+
+        // Then: the text is sent to the original user
+        verify(botClient).sendMessage(eq(userChatId), eq("nice meme!"), parseMode = eq(null))
+    }
+
+    @Test
+    fun `admin reply confirm command should be skipped`() {
+        // Given: a forwarded message from user in the approver chat
+        val forwardedMessage =
+            Message(
+                messageId = 10L,
+                chat = approverChat,
+                date = 100,
+                forwardOrigin = MessageOrigin.User(date = 99, senderUser = User(id = userChatId, isBot = false, firstName = "User")),
+            )
+        // Given: the approver replies with a confirm command
+        val replyMessage =
+            Message(
+                messageId = 11L,
+                chat = approverChat,
+                date = 101,
+                from = approverUser,
+                text = "this",
+                replyToMessage = forwardedMessage,
+            )
+
+        // When: the admin reply handler processes the message
+        val env =
+            MessageHandlerEnvironment(
+                bot,
+                Update(updateId = 5, message = replyMessage),
+                replyMessage,
+            )
+        adminReplyHandler.handle(env)
+
+        // Then: no message is sent (it's a confirm command)
+        verify(botClient, never()).sendMessage(any(), any(), anyOrNull())
+    }
+
+    @Test
+    fun `admin reply to non-forwarded message should be ignored`() {
+        // Given: a non-forwarded message in the approver chat
+        val nonForwardedMessage =
+            Message(
+                messageId = 10L,
+                chat = approverChat,
+                date = 100,
+            )
+        // Given: the approver replies to it
+        val replyMessage =
+            Message(
+                messageId = 11L,
+                chat = approverChat,
+                date = 101,
+                from = approverUser,
+                text = "hello",
+                replyToMessage = nonForwardedMessage,
+            )
+
+        // When: the admin reply handler processes the message
+        val env =
+            MessageHandlerEnvironment(
+                bot,
+                Update(updateId = 5, message = replyMessage),
+                replyMessage,
+            )
+        adminReplyHandler.handle(env)
+
+        // Then: no message is sent (not a forwarded message)
+        verify(botClient, never()).sendMessage(any(), any(), anyOrNull())
+    }
+
+    @Test
+    fun `non-approver reply should be ignored`() {
+        // Given: a forwarded message from user in the approver chat
+        val forwardedMessage =
+            Message(
+                messageId = 10L,
+                chat = approverChat,
+                date = 100,
+                forwardOrigin = MessageOrigin.User(date = 99, senderUser = User(id = userChatId, isBot = false, firstName = "User")),
+            )
+        // Given: a non-approver replies
+        val nonApprover = User(id = 999L, isBot = false, firstName = "Stranger")
+        val replyMessage =
+            Message(
+                messageId = 11L,
+                chat = approverChat,
+                date = 101,
+                from = nonApprover,
+                text = "nice meme!",
+                replyToMessage = forwardedMessage,
+            )
+
+        // When: the admin reply handler processes the message
+        val env =
+            MessageHandlerEnvironment(
+                bot,
+                Update(updateId = 5, message = replyMessage),
+                replyMessage,
+            )
+        adminReplyHandler.handle(env)
+
+        // Then: no message is sent (not an approver)
+        verify(botClient, never()).sendMessage(any(), any(), anyOrNull())
+    }
+
+    @Test
+    fun `admin reply from outside forward chat should be ignored`() {
+        // Given: a forwarded message in user's own chat
+        val forwardedMessage =
+            Message(
+                messageId = 10L,
+                chat = userChat,
+                date = 100,
+                forwardOrigin = MessageOrigin.User(date = 99, senderUser = User(id = userChatId, isBot = false, firstName = "User")),
+            )
+        // Given: the approver replies from outside the forward chat
+        val replyMessage =
+            Message(
+                messageId = 11L,
+                chat = userChat,
+                date = 101,
+                from = approverUser,
+                text = "hello there",
+                replyToMessage = forwardedMessage,
+            )
+
+        // When: the admin reply handler processes the message
+        val env =
+            MessageHandlerEnvironment(
+                bot,
+                Update(updateId = 5, message = replyMessage),
+                replyMessage,
+            )
+        adminReplyHandler.handle(env)
+
+        // Then: no message is sent (not in forward chat)
+        verify(botClient, never()).sendMessage(any(), any(), anyOrNull())
+    }
+
+    @Test
+    fun `admin reply without text should be ignored`() {
+        // Given: a forwarded message from user in the approver chat
+        val forwardedMessage =
+            Message(
+                messageId = 10L,
+                chat = approverChat,
+                date = 100,
+                forwardOrigin = MessageOrigin.User(date = 99, senderUser = User(id = userChatId, isBot = false, firstName = "User")),
+            )
+        // Given: the approver replies without text (e.g., a sticker)
+        val replyMessage =
+            Message(
+                messageId = 11L,
+                chat = approverChat,
+                date = 101,
+                from = approverUser,
+                replyToMessage = forwardedMessage,
+            )
+
+        // When: the admin reply handler processes the message
+        val env =
+            MessageHandlerEnvironment(
+                bot,
+                Update(updateId = 5, message = replyMessage),
+                replyMessage,
+            )
+        adminReplyHandler.handle(env)
+
+        // Then: no message is sent (no text)
+        verify(botClient, never()).sendMessage(any(), any(), anyOrNull())
     }
 
     @Test
