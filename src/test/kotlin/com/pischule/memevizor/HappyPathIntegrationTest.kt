@@ -363,7 +363,11 @@ class HappyPathIntegrationTest {
                 messageId = 10L,
                 chat = approverChat,
                 date = 100,
-                forwardOrigin = MessageOrigin.User(date = 99, senderUser = User(id = userChatId, isBot = false, firstName = "User")),
+                forwardOrigin =
+                    MessageOrigin.User(
+                        date = 99,
+                        senderUser = User(id = userChatId, isBot = false, firstName = "User"),
+                    ),
             )
         // Given: the approver replies with text
         val replyMessage =
@@ -397,7 +401,11 @@ class HappyPathIntegrationTest {
                 messageId = 10L,
                 chat = approverChat,
                 date = 100,
-                forwardOrigin = MessageOrigin.User(date = 99, senderUser = User(id = userChatId, isBot = false, firstName = "User")),
+                forwardOrigin =
+                    MessageOrigin.User(
+                        date = 99,
+                        senderUser = User(id = userChatId, isBot = false, firstName = "User"),
+                    ),
             )
         // Given: the approver replies with a confirm command
         val replyMessage =
@@ -464,7 +472,11 @@ class HappyPathIntegrationTest {
                 messageId = 10L,
                 chat = approverChat,
                 date = 100,
-                forwardOrigin = MessageOrigin.User(date = 99, senderUser = User(id = userChatId, isBot = false, firstName = "User")),
+                forwardOrigin =
+                    MessageOrigin.User(
+                        date = 99,
+                        senderUser = User(id = userChatId, isBot = false, firstName = "User"),
+                    ),
             )
         // Given: a non-approver replies
         val nonApprover = User(id = 999L, isBot = false, firstName = "Stranger")
@@ -499,7 +511,11 @@ class HappyPathIntegrationTest {
                 messageId = 10L,
                 chat = userChat,
                 date = 100,
-                forwardOrigin = MessageOrigin.User(date = 99, senderUser = User(id = userChatId, isBot = false, firstName = "User")),
+                forwardOrigin =
+                    MessageOrigin.User(
+                        date = 99,
+                        senderUser = User(id = userChatId, isBot = false, firstName = "User"),
+                    ),
             )
         // Given: the approver replies from outside the forward chat
         val replyMessage =
@@ -533,7 +549,11 @@ class HappyPathIntegrationTest {
                 messageId = 10L,
                 chat = approverChat,
                 date = 100,
-                forwardOrigin = MessageOrigin.User(date = 99, senderUser = User(id = userChatId, isBot = false, firstName = "User")),
+                forwardOrigin =
+                    MessageOrigin.User(
+                        date = 99,
+                        senderUser = User(id = userChatId, isBot = false, firstName = "User"),
+                    ),
             )
         // Given: the approver replies without text (e.g., a sticker)
         val replyMessage =

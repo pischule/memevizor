@@ -35,8 +35,7 @@ class AdminReplyHandlerService(
     }
 
     private fun shouldHandleMessage(env: MessageHandlerEnvironment): Boolean {
-        val isApprover =
-            env.message.from?.id?.let { botProps.approverUserIds.contains(it) } == true
+        val isApprover = env.message.from?.id?.let { botProps.approverUserIds.contains(it) } == true
         val isInForwardChat = env.message.chat.id == botProps.forwardChatId
         val isReply = env.message.replyToMessage != null
         val command = env.message.text?.lowercase()
