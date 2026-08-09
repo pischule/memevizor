@@ -1,0 +1,579 @@
+{
+  "reflection": [
+    {
+      "type": "com.github.kotlintelegrambot.Bot",
+      "methods": [
+        {
+          "name": "close",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "com.github.kotlintelegrambot.Bot$Builder"
+    },
+    {
+      "type": "com.github.kotlintelegrambot.dispatcher.handlers.media.MediaHandlerEnvironment"
+    },
+    {
+      "type": "com.github.kotlintelegrambot.entities.CallbackQuery",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.github.kotlintelegrambot.entities.Chat",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.github.kotlintelegrambot.entities.ChatAction",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.github.kotlintelegrambot.entities.ChatBackground",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.github.kotlintelegrambot.entities.ChatBoost",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.github.kotlintelegrambot.entities.ChatBoostAdded",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.github.kotlintelegrambot.entities.ChatBoostRemoved",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.github.kotlintelegrambot.entities.ChatBoostUpdated",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.github.kotlintelegrambot.entities.ChatInviteLink",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.github.kotlintelegrambot.entities.ChatJoinRequest",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.github.kotlintelegrambot.entities.ChatMember",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.github.kotlintelegrambot.entities.ChatMemberUpdated",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.github.kotlintelegrambot.entities.ChatOwnerChanged",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.github.kotlintelegrambot.entities.ChatOwnerLeft",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.github.kotlintelegrambot.entities.ChatShared",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.github.kotlintelegrambot.entities.ChosenInlineResult",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.github.kotlintelegrambot.entities.Contact",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.github.kotlintelegrambot.entities.DirectMessagePriceChanged",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.github.kotlintelegrambot.entities.ExternalReplyInfo",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.github.kotlintelegrambot.entities.ForumTopicClosed",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.github.kotlintelegrambot.entities.ForumTopicCreated",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.github.kotlintelegrambot.entities.ForumTopicEdited",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.github.kotlintelegrambot.entities.ForumTopicReopened",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.github.kotlintelegrambot.entities.Game",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.github.kotlintelegrambot.entities.GeneralForumTopicHidden",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.github.kotlintelegrambot.entities.GeneralForumTopicUnhidden",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.github.kotlintelegrambot.entities.Giveaway",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.github.kotlintelegrambot.entities.GiveawayCompleted",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.github.kotlintelegrambot.entities.GiveawayCreated",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.github.kotlintelegrambot.entities.GiveawayWinners",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.github.kotlintelegrambot.entities.InlineKeyboardMarkup",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.github.kotlintelegrambot.entities.InlineQuery",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.github.kotlintelegrambot.entities.InlineQuery$ChatType",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.github.kotlintelegrambot.entities.InviteLink",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.github.kotlintelegrambot.entities.Invoice",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.github.kotlintelegrambot.entities.LinkPreviewOptions",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.github.kotlintelegrambot.entities.Location",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.github.kotlintelegrambot.entities.ManagedBotCreated",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.github.kotlintelegrambot.entities.ManagedBotUpdated",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.github.kotlintelegrambot.entities.Message",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.github.kotlintelegrambot.entities.MessageEntity",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.github.kotlintelegrambot.entities.MessageEntity$Type",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.github.kotlintelegrambot.entities.MessageOrigin",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.github.kotlintelegrambot.entities.MessageOrigin$Channel",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.github.kotlintelegrambot.entities.MessageReactionCountUpdated",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.github.kotlintelegrambot.entities.MessageReactionUpdated",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.github.kotlintelegrambot.entities.PaidMessagePriceChanged",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.github.kotlintelegrambot.entities.ProximityAlertTriggered",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.github.kotlintelegrambot.entities.ReactionCount",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.github.kotlintelegrambot.entities.SharedUser",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.github.kotlintelegrambot.entities.Story",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.github.kotlintelegrambot.entities.TextQuote",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.github.kotlintelegrambot.entities.Update",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.github.kotlintelegrambot.entities.User",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.github.kotlintelegrambot.entities.UsersShared",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.github.kotlintelegrambot.entities.Venue",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.github.kotlintelegrambot.entities.WebAppData",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.github.kotlintelegrambot.entities.WriteAccessAllowed",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.github.kotlintelegrambot.entities.business.BusinessBotRights",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.github.kotlintelegrambot.entities.business.BusinessConnection",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.github.kotlintelegrambot.entities.business.BusinessMessagesDeleted",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.github.kotlintelegrambot.entities.checklists.Checklist",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.github.kotlintelegrambot.entities.checklists.ChecklistTask",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.github.kotlintelegrambot.entities.checklists.ChecklistTasksAdded",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.github.kotlintelegrambot.entities.checklists.ChecklistTasksDone",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.github.kotlintelegrambot.entities.dice.Dice",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.github.kotlintelegrambot.entities.files.Animation",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.github.kotlintelegrambot.entities.files.Audio",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.github.kotlintelegrambot.entities.files.Document",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.github.kotlintelegrambot.entities.files.File",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.github.kotlintelegrambot.entities.files.LivePhoto",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.github.kotlintelegrambot.entities.files.PhotoSize",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.github.kotlintelegrambot.entities.files.Video",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.github.kotlintelegrambot.entities.files.VideoNote",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.github.kotlintelegrambot.entities.files.Voice",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.github.kotlintelegrambot.entities.gifts.Gift",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.github.kotlintelegrambot.entities.gifts.GiftBackground",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.github.kotlintelegrambot.entities.gifts.GiftInfo",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.github.kotlintelegrambot.entities.gifts.UniqueGift",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.github.kotlintelegrambot.entities.gifts.UniqueGiftBackdrop",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.github.kotlintelegrambot.entities.gifts.UniqueGiftBackdropColors",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.github.kotlintelegrambot.entities.gifts.UniqueGiftInfo",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.github.kotlintelegrambot.entities.gifts.UniqueGiftModel",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.github.kotlintelegrambot.entities.gifts.UniqueGiftSymbol",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.github.kotlintelegrambot.entities.payments.OrderInfo",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.github.kotlintelegrambot.entities.payments.PaidMediaInfo",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.github.kotlintelegrambot.entities.payments.PaidMediaPurchased",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.github.kotlintelegrambot.entities.payments.PreCheckoutQuery",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.github.kotlintelegrambot.entities.payments.RefundedPayment",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.github.kotlintelegrambot.entities.payments.ShippingAddress",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.github.kotlintelegrambot.entities.payments.ShippingQuery",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.github.kotlintelegrambot.entities.payments.StarAmount",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.github.kotlintelegrambot.entities.payments.SuccessfulPayment",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.github.kotlintelegrambot.entities.polls.Poll",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.github.kotlintelegrambot.entities.polls.PollAnswer",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.github.kotlintelegrambot.entities.polls.PollOption",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.github.kotlintelegrambot.entities.polls.PollType",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.github.kotlintelegrambot.entities.reaction.ReactionType",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.github.kotlintelegrambot.entities.reaction.ReactionType$Emoji",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.github.kotlintelegrambot.entities.stickers.MaskPosition",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.github.kotlintelegrambot.entities.stickers.Sticker",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.github.kotlintelegrambot.entities.suggestedposts.DirectMessagesTopic",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.github.kotlintelegrambot.entities.suggestedposts.SuggestedPostApprovalFailed",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.github.kotlintelegrambot.entities.suggestedposts.SuggestedPostApproved",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.github.kotlintelegrambot.entities.suggestedposts.SuggestedPostDeclined",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.github.kotlintelegrambot.entities.suggestedposts.SuggestedPostInfo",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.github.kotlintelegrambot.entities.suggestedposts.SuggestedPostPaid",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.github.kotlintelegrambot.entities.suggestedposts.SuggestedPostPrice",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.github.kotlintelegrambot.entities.suggestedposts.SuggestedPostRefunded",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.github.kotlintelegrambot.network.Response",
+      "fields": [
+        {
+          "name": "ok"
+        },
+        {
+          "name": "result"
+        }
+      ]
+    },
+    {
+      "type": "com.github.kotlintelegrambot.types.ConsumableObject"
+    },
+    {
+      "type": "com.google.gson.Gson"
+    },
+    {
+      "type": "kotlinx.coroutines.CancellableContinuationImpl",
+      "allDeclaredMethods": true
+    },
+    {
+      "type": "kotlinx.coroutines.CancelledContinuation",
+      "allDeclaredMethods": true
+    },
+    {
+      "type": "kotlinx.coroutines.CompletedExceptionally",
+      "allDeclaredMethods": true
+    },
+    {
+      "type": "kotlinx.coroutines.DispatchedCoroutine",
+      "allDeclaredMethods": true
+    },
+    {
+      "type": "kotlinx.coroutines.EventLoopImplBase",
+      "allDeclaredMethods": true
+    },
+    {
+      "type": "kotlinx.coroutines.InvokeOnCancelling",
+      "allDeclaredMethods": true
+    },
+    {
+      "type": "kotlinx.coroutines.JobSupport",
+      "allDeclaredMethods": true
+    },
+    {
+      "type": "kotlinx.coroutines.JobSupport$Finishing",
+      "allDeclaredMethods": true
+    },
+    {
+      "type": "kotlinx.coroutines.channels.BufferedChannel",
+      "allDeclaredMethods": true
+    },
+    {
+      "type": "kotlinx.coroutines.internal.ConcurrentLinkedListNode",
+      "allDeclaredMethods": true
+    },
+    {
+      "type": "kotlinx.coroutines.internal.DispatchedContinuation",
+      "allDeclaredMethods": true
+    },
+    {
+      "type": "kotlinx.coroutines.internal.LimitedDispatcher",
+      "allDeclaredMethods": true
+    },
+    {
+      "type": "kotlinx.coroutines.internal.LockFreeLinkedListNode",
+      "allDeclaredMethods": true
+    },
+    {
+      "type": "kotlinx.coroutines.internal.LockFreeTaskQueue",
+      "allDeclaredMethods": true
+    },
+    {
+      "type": "kotlinx.coroutines.internal.LockFreeTaskQueueCore",
+      "allDeclaredMethods": true
+    },
+    {
+      "type": "kotlinx.coroutines.internal.Segment",
+      "allDeclaredMethods": true
+    },
+    {
+      "type": "kotlinx.coroutines.reactor.MonoKt",
+      "allDeclaredMethods": true
+    },
+    {
+      "type": "kotlinx.coroutines.scheduling.CoroutineScheduler",
+      "allDeclaredMethods": true
+    },
+    {
+      "type": "kotlinx.coroutines.scheduling.CoroutineScheduler$Worker",
+      "allDeclaredMethods": true
+    },
+    {
+      "type": "kotlinx.coroutines.scheduling.WorkQueue",
+      "allDeclaredMethods": true
+    },
+    {
+      "type": "kotlinx.coroutines.sync.MutexImpl",
+      "allDeclaredMethods": true
+    },
+    {
+      "type": "kotlinx.coroutines.sync.SemaphoreAndMutexImpl",
+      "allDeclaredMethods": true
+    },
+    {
+      "type": "kotlinx.serialization.Serializable"
+    },
+    {
+      "type": "kotlinx.serialization.cbor.Cbor"
+    },
+    {
+      "type": "kotlinx.serialization.json.Json"
+    },
+    {
+      "type": "kotlinx.serialization.protobuf.ProtoBuf"
+    },
+    {
+      "type": {
+        "proxy": [
+          "com.github.kotlintelegrambot.network.ApiService"
+        ]
+      }
+    }
+  ]
+}
