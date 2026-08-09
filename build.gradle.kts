@@ -3,6 +3,7 @@ plugins {
     kotlin("plugin.spring") version "2.4.0"
     id("org.springframework.boot") version "4.1.0"
     id("io.spring.dependency-management") version "1.1.7"
+    id("org.graalvm.buildtools.native") version "1.1.1"
     id("com.diffplug.spotless") version "8.7.0"
 }
 
@@ -11,7 +12,7 @@ version = "0.0.1-SNAPSHOT"
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(21)
+        languageVersion = JavaLanguageVersion.of(25)
     }
 }
 
@@ -27,6 +28,18 @@ repositories {
 }
 
 dependencies {
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.11.0") {
+        version {
+            strictly("1.11.0")
+        }
+        because("telegram:10.0.0 requires kotlinx-coroutines >= 1.11.0")
+    }
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.11.0") {
+        version {
+            strictly("1.11.0")
+        }
+        because("telegram:10.0.0 requires kotlinx-coroutines >= 1.11.0")
+    }
     implementation("org.springframework.boot:spring-boot-starter")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("io.github.kotlin-telegram-bot.kotlin-telegram-bot:telegram:10.0.0")
@@ -45,7 +58,7 @@ dependencies {
 
 kotlin {
     compilerOptions {
-        freeCompilerArgs.addAll("-Xjsr305=strict")
+        freeCompilerArgs.addAll("-Xjsr305=strict", "-Xannotation-default-target=param-property")
     }
 }
 
@@ -58,3 +71,4 @@ spotless {
     ktfmt("0.64").kotlinlangStyle()
   }
 }
+

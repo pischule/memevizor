@@ -1,5 +1,5 @@
 [tools]
-java = "temurin-21"
+java = "graalvm-community-25.0.2"
 
 [tasks.fmt]
 description = 'Fourmat source code'

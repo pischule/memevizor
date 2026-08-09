@@ -1,0 +1,27 @@
+{
+  "reflection": [
+    {
+      "type": {
+        "proxy": [
+          "com.github.kotlintelegrambot.network.ApiService"
+        ]
+      }
+    },
+    {
+      "type": "kotlinx.coroutines.Job",
+      "allDeclaredMethods": true
+    },
+    {
+      "type": "kotlinx.coroutines.Job$DefaultImpls",
+      "allDeclaredMethods": true
+    },
+    {
+      "type": "kotlinx.coroutines.CancellableContinuation",
+      "allDeclaredMethods": true
+    },
+    {
+      "type": "kotlinx.coroutines.CancellableContinuationImpl",
+      "allDeclaredMethods": true
+    }
+  ]
+}
